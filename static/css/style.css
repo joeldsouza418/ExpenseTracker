@@ -66,26 +66,46 @@ body {
 .sparkle-mr { top: 48%; right: 25px; }
 
 /* ==========================================================================
-   Hand-Drawn Poster Header
+   Compact Top Navbar & Brand Styling
    ========================================================================== */
 
-.poster-header {
-  position: relative;
+.navbar-custom {
+  background: rgba(250, 247, 240, 0.96);
+  backdrop-filter: blur(10px);
+  border: none !important;
+  box-shadow: none !important;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+  z-index: 1000;
 }
 
-.title-wrap {
-  max-width: 680px;
+.brand-icon-box {
+  width: 44px;
+  height: 44px;
+  background: #e2f0d9;
+  border: var(--ink-border-thin);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0px #2b2d42;
 }
 
-.main-title {
-  font-family: var(--font-title);
-  font-size: clamp(2.4rem, 6vw, 3.8rem);
+.brand-title {
+  font-family: 'Great Vibes', 'Dancing Script', 'Satisfy', 'Pacifico', cursive;
+  font-size: 2.35rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
   color: var(--ink-color);
-  margin-bottom: 0.2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.brand-subtitle {
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink-light);
   line-height: 1.1;
-  text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.9);
 }
 
 /* Subtitle Pill: WITHOUT A COMPLICATED APP */
@@ -280,7 +300,6 @@ body {
   border-radius: 16px;
   box-shadow: var(--doodle-shadow);
   padding: 1.25rem;
-  height: 100%;
   position: relative;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -493,48 +512,76 @@ body {
   font-weight: bold;
 }
 
-/* Income / Expense Toggle */
+/* Income / Expense Toggle & Sliding Animation */
 .doodle-type-toggle {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
   background: #f1ede3;
   padding: 0.35rem;
   border: var(--ink-border-thin);
-  border-radius: 12px;
+  border-radius: 14px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.05);
+  z-index: 1;
+  user-select: none;
+}
+
+.type-toggle-slider {
+  position: absolute;
+  top: 0.35rem;
+  left: 0.35rem;
+  width: calc(50% - 0.6rem);
+  height: calc(100% - 0.7rem);
+  background-color: #fff0e8;
+  border: var(--ink-border-thin);
+  border-radius: 10px;
+  box-shadow: 2px 2px 0px #2b2d42;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.doodle-type-toggle.is-expense .type-toggle-slider {
+  transform: translateX(calc(100% + 0.5rem));
+  background-color: #fff0e8;
+}
+
+.doodle-type-toggle.is-income .type-toggle-slider {
+  transform: translateX(0);
+  background-color: #eaf6ea;
 }
 
 .doodle-type-btn {
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  padding: 0.55rem;
+  position: relative;
+  z-index: 2;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0.55rem 0.5rem;
   font-family: var(--font-title);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink-light);
+  opacity: 0.7;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: color 0.25s ease, opacity 0.25s ease;
 }
 
-.doodle-type-btn.active.type-income,
+.doodle-type-toggle.is-income #typeIncomeBtn,
 .doodle-type-btn.active#typeIncomeBtn {
-  background: #ffffff;
-  color: var(--green-dark);
-  border: var(--ink-border-thin);
-  box-shadow: 2px 2px 0px #2b2d42;
+  color: var(--green-dark) !important;
+  opacity: 1 !important;
 }
 
-.doodle-type-btn.active.type-expense,
+.doodle-type-toggle.is-expense #typeExpenseBtn,
 .doodle-type-btn.active#typeExpenseBtn {
-  background: #ffffff;
-  color: var(--peach-dark);
-  border: var(--ink-border-thin);
-  box-shadow: 2px 2px 0px #2b2d42;
+  color: var(--peach-dark) !important;
+  opacity: 1 !important;
 }
 
 /* Category Preset Stickers/Pills */
@@ -667,9 +714,15 @@ body {
 /* Top 3 Mini Stat Boxes */
 .mini-stat-box {
   border: var(--ink-border-thin);
-  border-radius: 10px;
-  padding: 0.5rem 0.25rem;
-  box-shadow: 2px 2px 0px #2b2d42;
+  border-radius: 14px;
+  padding: 1.1rem 0.85rem;
+  box-shadow: 3px 3px 0px #2b2d42;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mini-stat-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px #2b2d42;
 }
 
 .box-income { background-color: #eaf6ea; }
@@ -677,16 +730,19 @@ body {
 .box-balance { background-color: #f2eefd; }
 
 .mini-stat-label {
-  font-family: var(--font-hand);
-  font-size: 1rem;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--ink-light);
+  margin-bottom: 0.25rem;
   line-height: 1.1;
 }
 
 .mini-stat-val {
   font-family: var(--font-title);
-  font-size: 1.15rem;
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -773,8 +829,23 @@ body {
 .doodle-table-responsive {
   border: var(--ink-border);
   border-radius: 12px;
+  max-height: 295px;
+  overflow-y: auto;
   overflow-x: auto;
   box-shadow: 2px 2px 0px #2b2d42;
+}
+
+.doodle-table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.doodle-table-responsive::-webkit-scrollbar-track {
+  background: #f1ede3;
+  border-radius: 4px;
+}
+.doodle-table-responsive::-webkit-scrollbar-thumb {
+  background: #2b2d42;
+  border-radius: 4px;
 }
 
 .doodle-table {
@@ -784,6 +855,9 @@ body {
 }
 
 .doodle-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
   background-color: #e5ede3;
   border-bottom: var(--ink-border);
   border-right: 1px dashed rgba(43, 45, 66, 0.2);
@@ -973,3 +1047,239 @@ body {
 .text-ink-muted {
   color: var(--ink-light);
 }
+
+/* ==========================================================================
+   Navigation Tabs & Analytics Summary Page Styles
+   ========================================================================== */
+
+/* Page Nav Buttons (Dashboard vs Spending Summary) */
+.nav-page-btn {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: #ffffff;
+  color: var(--ink-color);
+  border: var(--ink-border);
+  border-radius: 20px;
+  padding: 0.4rem 1.1rem;
+  box-shadow: 2.5px 2.5px 0px #2b2d42;
+  transition: all 0.15s ease;
+}
+
+.nav-page-btn:hover {
+  background: #fbf5e8;
+  color: var(--ink-color);
+  transform: translateY(-1px);
+  box-shadow: 3.5px 3.5px 0px #2b2d42;
+}
+
+.nav-page-btn.active {
+  background: #2e6955;
+  color: #ffffff;
+  box-shadow: 2.5px 2.5px 0px #2b2d42;
+}
+
+/* Timeframe Selector Tabs (Day, Month, Year) */
+.doodle-time-tab {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ink-color);
+  background: #f1ede3;
+  border: var(--ink-border-thin);
+  border-radius: 16px;
+  padding: 0.4rem 1rem;
+  box-shadow: 2px 2px 0px #2b2d42;
+  transition: all 0.12s ease;
+}
+
+.doodle-time-tab:hover {
+  background: #e4decb;
+  color: var(--ink-color);
+  transform: translateY(-1px);
+}
+
+.doodle-time-tab.active {
+  background: #2b2d42;
+  color: #ffffff;
+  box-shadow: 2px 2px 0px #2b2d42;
+}
+
+/* Chart Canvas Wrapper Container */
+.chart-container-box {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  max-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Floating React-Style Toast Notifications
+   ========================================================================== */
+.toast-container-custom {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1090;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 380px;
+  width: calc(100vw - 48px);
+  pointer-events: none;
+}
+
+.toast-card {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: var(--ink-border);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  box-shadow: 4px 4px 0px #2b2d42;
+  animation: toastSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast-card.toast-hiding {
+  opacity: 0;
+  transform: translateX(120%);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(120%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.toast-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: var(--ink-border-thin);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.toast-success .toast-icon {
+  background: #eaf6ea;
+  color: var(--green-dark);
+}
+
+.toast-danger .toast-icon {
+  background: #fce4ec;
+  color: var(--rose-dark);
+}
+
+.toast-warning .toast-icon {
+  background: #fff9db;
+  color: #b7791f;
+}
+
+.toast-info .toast-icon {
+  background: #e1f5fe;
+  color: var(--blue-dark);
+}
+
+.toast-body-text {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink-color);
+  flex-grow: 1;
+  line-height: 1.35;
+}
+
+.toast-close-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink-light);
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.toast-close-btn:hover {
+  color: var(--ink-color);
+  transform: scale(1.15);
+}
+
+/* ==========================================================================
+   Redesigned Hand-Drawn Footer
+   ========================================================================== */
+.doodle-footer {
+  border-top: var(--ink-border-thin);
+  background: rgba(250, 247, 240, 0.7);
+  position: relative;
+}
+
+.footer-card-box {
+  background: var(--paper-card);
+  border: var(--ink-border-thin);
+  box-shadow: var(--doodle-shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.footer-card-box:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--doodle-shadow);
+}
+
+.footer-credit-text {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink-color);
+}
+
+.footer-author-pill {
+  display: inline-flex;
+  align-items: center;
+  background: #ebe7f7;
+  border: var(--ink-border-thin);
+  border-radius: 20px;
+  padding: 0.3rem 0.95rem;
+  box-shadow: 2px 2px 0px #2b2d42;
+  transition: all 0.2s ease;
+}
+
+.footer-author-pill:hover {
+  background: #dcd6f7;
+  transform: scale(1.04) rotate(-1deg);
+}
+
+.author-handle {
+  font-family: 'Fredoka', var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--purple-dark);
+  letter-spacing: 0.03em;
+}
+
+.footer-tech-stack {
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  color: var(--ink-light);
+}
+

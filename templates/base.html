@@ -9,7 +9,7 @@
   <!-- Google Fonts: Fredoka (Headings/Banners), Patrick Hand (Handwritten accents), Nunito (Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Gaegu:wght@400;700&family=Nunito:wght@400;600;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Pacifico&family=Satisfy&family=Fredoka:wght@400;500;600;700&family=Gaegu:wght@400;700&family=Nunito:wght@400;600;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
 
   <!-- Bootstrap 5.3 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,87 +19,58 @@
 
   <!-- Custom Hand-Drawn Theme Styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <!-- Chart.js 4.x CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
-  <!-- Floating Sparkles / Doodles in Background -->
-  <div class="doodle-sparkle sparkle-tl">✦</div>
-  <div class="doodle-sparkle sparkle-tr">✧</div>
-  <div class="doodle-sparkle sparkle-ml">✧</div>
-  <div class="doodle-sparkle sparkle-mr">✦</div>
-
-  <!-- Header Section with Hand-Drawn Poster Aesthetic -->
-  <header class="poster-header pt-4 pb-2">
-    <div class="container text-center position-relative">
+  <!-- Compact Sleek Top Navbar -->
+  <nav class="navbar-custom sticky-top py-3">
+    <div class="container-fluid px-3 px-md-5 d-flex align-items-center justify-content-between flex-wrap gap-2">
       
-      <!-- Left Doodle Notepad (Hidden on small mobile) -->
-      <div class="header-doodle-notepad d-none d-lg-block">
-        <div class="notepad-pin"></div>
-        <div class="notepad-content">
-          <div class="notepad-line"><span class="check-mark">✓</span> Simple</div>
-          <div class="notepad-line"><span class="check-mark">✓</span> Clear</div>
-          <div class="notepad-line"><span class="check-mark">✓</span> Yours</div>
-          <div class="notepad-heart">♡</div>
+      <!-- Left Side: Dynamic Greeting & Title -->
+      <a class="navbar-brand d-flex align-items-center text-decoration-none m-0" href="{{ url_for('index') }}">
+        <div class="d-flex flex-column">
+          <span class="brand-title">{{ greeting }}</span>
+          <span class="brand-subtitle">Personal Expense Tracker</span>
         </div>
-      </div>
+      </a>
 
-      <!-- Right Doodle Plant (Hidden on small mobile) -->
-      <div class="header-doodle-plant d-none d-lg-block">
-        <div class="plant-leaves">🪴</div>
-        <div class="plant-sparkle">✨</div>
-      </div>
-
-      <!-- Main Title -->
-      <div class="title-wrap mx-auto">
-        <h1 class="main-title">TRACK MONEY</h1>
-        <div class="subtitle-banner">
-          <span>WITHOUT A COMPLICATED APP</span>
-        </div>
-
-        <!-- Hand-drawn Ribbon: Personal Money Snapshot -->
-        <div class="ribbon-container my-3">
-          <div class="cute-ribbon">
-            <span class="ribbon-text">Personal Money Snapshot</span>
-          </div>
-        </div>
-
-        <!-- Heart flourish & friendly instruction -->
-        <div class="header-subtext-group">
-          <div class="hand-doodle-heart">⁓ ♡ ⁓</div>
-          <p class="header-instruction mb-0">
-            Use the <strong>HTML tracker</strong> for daily entries and the <strong>dashboard</strong> for financial insights.
-          </p>
-        </div>
-      </div>
-
-      <!-- Quick Action Bar -->
-      <div class="d-flex justify-content-center align-items-center gap-3 mt-3">
-        <span class="header-date-pill">
-          <i class="bi bi-calendar3 me-1"></i> Today: <strong>{{ today }}</strong>
-        </span>
-        <a href="#addTransactionSection" class="btn-cute-jump">
-          <i class="bi bi-pencil-fill me-1"></i> Quick Entry
+      <!-- Right Side: Navigation Tabs -->
+      <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+        <a href="{{ url_for('index') }}" class="nav-page-btn {% if active_tab == 'dashboard' %}active{% endif %}">
+          <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('summary') }}" class="nav-page-btn {% if active_tab == 'summary' %}active{% endif %}">
+          <span>Spending Summary</span>
         </a>
       </div>
 
     </div>
-  </header>
+  </nav>
 
-  <!-- Flash Messages Banner (Sticky Alert) -->
-  <div class="container mt-2">
+  <!-- Floating React-Style Toast Notifications Container -->
+  <div class="toast-container-custom" id="toastContainer">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="alert alert-hand-drawn alert-{{ category }} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
-            {% if category == 'success' %}
-              <span class="alert-icon-wrap bg-success text-white">✓</span>
-            {% elif category == 'danger' %}
-              <span class="alert-icon-wrap bg-danger text-white">!</span>
-            {% else %}
-              <span class="alert-icon-wrap bg-info text-dark">i</span>
-            {% endif %}
-            <div class="flex-grow-1 fw-bold">{{ message }}</div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <div class="toast-card toast-{{ category }}" role="alert">
+            <div class="toast-icon">
+              {% if category == 'success' %}
+                ✓
+              {% elif category == 'danger' %}
+                ✕
+              {% elif category == 'warning' %}
+                !
+              {% else %}
+                i
+              {% endif %}
+            </div>
+            <div class="toast-body-text">
+              {{ message }}
+            </div>
+            <button type="button" class="toast-close-btn" onclick="this.parentElement.classList.add('toast-hiding'); setTimeout(() => this.parentElement.remove(), 350);" aria-label="Close">×</button>
           </div>
         {% endfor %}
       {% endif %}
@@ -111,29 +82,20 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Cute Hand-Drawn Poster Footer -->
-  <footer class="poster-footer py-4 mt-5 text-center">
-    <div class="container">
-      <div class="footer-doodle-divider mb-3">⁓ ♡ ⁓</div>
-      <div class="d-flex flex-wrap justify-content-center align-items-center gap-4 text-ink-muted">
-        <div class="d-flex align-items-center gap-2 footer-badge-item">
-          <span class="fs-4">💻</span>
-          <span class="fw-bold">Works offline</span>
+  <!-- Redesigned Hand-Drawn Poster Footer -->
+  <footer class="doodle-footer py-4 mt-5">
+    <div class="container-fluid px-3 px-md-5 text-center">
+      <div class="d-inline-flex flex-column align-items-center gap-2 p-3 p-md-4 rounded-4 footer-card-box">
+        <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+          <span class="footer-credit-text">Designed &amp; Developed by</span>
+          <span class="footer-author-pill">
+            <span class="author-handle">joel.dsouza11</span>
+          </span>
         </div>
-        <span class="d-none d-md-inline">•</span>
-        <div class="d-flex align-items-center gap-2 footer-badge-item">
-          <span class="fs-4">☕</span>
-          <span class="fw-bold">Simple personal finance bundle</span>
-        </div>
-        <span class="d-none d-md-inline">•</span>
-        <div class="d-flex align-items-center gap-2 footer-badge-item">
-          <span class="fs-4">✨</span>
-          <span class="fw-bold">Fast daily entry. Clean and focused.</span>
-        </div>
+        <p class="small mb-0 footer-tech-stack">
+          Built with Flask &bull; SQLite &bull; Bootstrap 5
+        </p>
       </div>
-      <p class="small text-muted mt-3 mb-0" style="font-family: 'Patrick Hand', cursive; font-size: 1.15rem;">
-        Built with Flask &bull; SQLite &bull; Hand-crafted cozy design ♡
-      </p>
     </div>
   </footer>
 

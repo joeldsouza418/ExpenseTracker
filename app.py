@@ -12,12 +12,29 @@ database.init_db()
 
 @app.template_filter("format_currency")
 def format_currency(value):
-    """Format a numeric value into a currency format with commas and 2 decimals."""
+    """Format a numeric value into Rupees currency format (₹)."""
     try:
         val = float(value)
-        return f"${val:,.2f}"
+        return f"₹{val:,.2f}"
     except (ValueError, TypeError):
-        return "$0.00"
+        return "₹0.00"
+
+
+@app.context_processor
+def inject_context():
+    """Inject dynamic time-of-day greeting into all Jinja templates."""
+    hour = datetime.now().hour
+    if 5 <= hour < 12:
+        greeting = "Good morning!"
+    elif 12 <= hour < 17:
+        greeting = "Good afternoon!"
+    elif 17 <= hour < 22:
+        greeting = "Good evening!"
+    else:
+        greeting = "Good night!"
+    return dict(greeting=greeting)
+
+
 
 
 @app.route("/", methods=["GET"])
@@ -42,7 +59,41 @@ def index():
         filter_type=filter_type,
         search_query=search_query,
         today=today_str,
+        active_tab="dashboard",
     )
+
+
+@app.route("/summary", methods=["GET"])
+def summary():
+    timeframe = request.args.get("timeframe", "month").strip().lower()
+    if timeframe not in ("day", "month", "year"):
+        timeframe = "month"
+
+    target_period = request.args.get("period", "").strip()
+
+    today_str = datetime.today().strftime("%Y-%m-%d")
+    current_month_str = datetime.today().strftime("%Y-%m")
+    current_year_str = datetime.today().strftime("%Y")
+
+    if not target_period:
+        if timeframe == "day":
+            target_period = today_str
+        elif timeframe == "year":
+            target_period = current_year_str
+        else:
+            target_period = current_month_str
+
+    analytics = database.get_analytics_summary(timeframe=timeframe, target_period=target_period)
+
+    return render_template(
+        "summary.html",
+        analytics=analytics,
+        today=today_str,
+        current_month=current_month_str,
+        current_year=current_year_str,
+        active_tab="summary",
+    )
+
 
 
 @app.route("/add", methods=["POST"])

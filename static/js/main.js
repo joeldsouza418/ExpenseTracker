@@ -79,13 +79,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Switch Transaction Type
   function setTransactionType(type) {
     if (typeHiddenInput) typeHiddenInput.value = type;
+    const toggleContainer = document.getElementById('doodleTypeToggle');
 
     if (type === 'Income') {
       typeIncomeBtn?.classList.add('active');
       typeExpenseBtn?.classList.remove('active');
+      toggleContainer?.classList.add('is-income');
+      toggleContainer?.classList.remove('is-expense');
     } else {
       typeExpenseBtn?.classList.add('active');
       typeIncomeBtn?.classList.remove('active');
+      toggleContainer?.classList.add('is-expense');
+      toggleContainer?.classList.remove('is-income');
     }
 
     renderCategoryPills(type);
@@ -184,5 +189,49 @@ document.addEventListener('DOMContentLoaded', () => {
       if (descEl) descEl.textContent = txDesc || 'this transaction';
     });
   }
+
+  // React-Style Toast Auto-Dismiss
+  const existingToasts = document.querySelectorAll('.toast-card');
+  existingToasts.forEach((toast) => {
+    setTimeout(() => {
+      toast.classList.add('toast-hiding');
+      setTimeout(() => toast.remove(), 350);
+    }, 4000);
+  });
 });
+
+/**
+ * Global JavaScript helper to trigger a React-style toast popup dynamically
+ */
+window.showToast = function(message, category = 'success') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast-card toast-${category}`;
+  toast.setAttribute('role', 'alert');
+
+  let iconSymbol = '✓';
+  if (category === 'danger') iconSymbol = '✕';
+  else if (category === 'warning') iconSymbol = '!';
+  else if (category === 'info') iconSymbol = 'i';
+
+  toast.innerHTML = `
+    <div class="toast-icon">${iconSymbol}</div>
+    <div class="toast-body-text">${message}</div>
+    <button type="button" class="toast-close-btn" aria-label="Close">×</button>
+  `;
+
+  toast.querySelector('.toast-close-btn').addEventListener('click', () => {
+    toast.classList.add('toast-hiding');
+    setTimeout(() => toast.remove(), 350);
+  });
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('toast-hiding');
+    setTimeout(() => toast.remove(), 350);
+  }, 4000);
+};
 

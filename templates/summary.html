@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Spending Summary & Analytics — Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-5">
+
+  <!-- Section Header -->
+  <div class="text-center mb-4">
+    <h3 class="doodle-section-title mb-1">SPENDING SUMMARY & ANALYTICS</h3>
+    <p class="doodle-section-subtitle text-muted">Visual insights by Day, Month, or Year</p>
+  </div>
+
+  <!-- ========================================================
+       1. TIMEFRAME & PERIOD FILTER CONTROL BAR
+       ======================================================== -->
+  <div class="doodle-card p-3 p-md-4 mb-4">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      
+      <!-- Timeframe Selector Tabs -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="fw-bold me-1 text-dark" style="font-family: 'Fredoka', cursive;">View By:</span>
+        <a href="{{ url_for('summary', timeframe='day') }}" class="doodle-time-tab {% if analytics.timeframe == 'day' %}active{% endif %}">
+          Daily
+        </a>
+        <a href="{{ url_for('summary', timeframe='month') }}" class="doodle-time-tab {% if analytics.timeframe == 'month' %}active{% endif %}">
+          Monthly
+        </a>
+        <a href="{{ url_for('summary', timeframe='year') }}" class="doodle-time-tab {% if analytics.timeframe == 'year' %}active{% endif %}">
+          Yearly
+        </a>
+      </div>
+
+      <!-- Specific Period Selector Form -->
+      <form action="{{ url_for('summary') }}" method="GET" class="d-flex align-items-center gap-2">
+        <input type="hidden" name="timeframe" value="{{ analytics.timeframe }}">
+        
+        <label for="periodInput" class="fw-bold text-dark mb-0 text-nowrap" style="font-family: 'Patrick Hand', cursive; font-size: 1.15rem;">
+          Select Period:
+        </label>
+
+        {% if analytics.timeframe == 'day' %}
+          <input type="date" id="periodInput" name="period" class="doodle-search-input" style="width: 160px;" value="{{ analytics.target_period }}" onchange="this.form.submit()">
+        {% elif analytics.timeframe == 'year' %}
+          <select id="periodInput" name="period" class="doodle-search-input" style="width: 120px;" onchange="this.form.submit()">
+            {% for yr in range(2023, 2030) %}
+              <option value="{{ yr }}" {% if analytics.target_period == yr|string %}selected{% endif %}>{{ yr }}</option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <!-- Month (default) -->
+          <input type="month" id="periodInput" name="period" class="doodle-search-input" style="width: 170px;" value="{{ analytics.target_period }}" onchange="this.form.submit()">
+        {% endif %}
+
+        <button type="submit" class="btn-doodle-primary py-1 px-3 fs-6">Update</button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================================
+       2. PERIOD FINANCIAL STAT CARDS
+       ======================================================== -->
+  <section class="mb-4">
+    <div class="row g-3">
+      <!-- Period Income -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="doodle-card card-income-theme">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="doodle-pill pill-purple">INCOME</span>
+          </div>
+          <span class="doodle-metric-label">Period Income</span>
+          <div class="doodle-metric-value text-purple-dark mt-1">
+            {{ analytics.period_income | format_currency }}
+          </div>
+          <small class="text-muted d-block mt-1" style="font-family: 'Patrick Hand', cursive;">
+            Earnings for {{ analytics.target_period }}
+          </small>
+        </div>
+      </div>
+
+      <!-- Period Expense -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="doodle-card card-expense-theme">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="doodle-pill pill-peach">EXPENSES</span>
+          </div>
+          <span class="doodle-metric-label">Period Expense</span>
+          <div class="doodle-metric-value text-peach-dark mt-1">
+            {{ analytics.period_expense | format_currency }}
+          </div>
+          <small class="text-muted d-block mt-1" style="font-family: 'Patrick Hand', cursive;">
+            Spendings for {{ analytics.target_period }}
+          </small>
+        </div>
+      </div>
+
+      <!-- Net Balance -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="doodle-card card-cashflow-theme">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="doodle-pill pill-green">NET BALANCE</span>
+          </div>
+          <span class="doodle-metric-label">Net Balance</span>
+          <div class="doodle-metric-value {% if analytics.period_balance < 0 %}text-danger{% else %}text-green-dark{% endif %} mt-1">
+            {{ analytics.period_balance | format_currency }}
+          </div>
+          <small class="text-muted d-block mt-1" style="font-family: 'Patrick Hand', cursive;">
+            Income minus expenses
+          </small>
+        </div>
+      </div>
+
+      <!-- Savings Rate / Efficiency -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="doodle-card card-review-theme">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="doodle-pill pill-rose">SAVINGS RATE</span>
+          </div>
+          <span class="doodle-metric-label">Income Retained</span>
+          <div class="doodle-metric-value text-rose-dark mt-1">
+            {{ analytics.savings_rate }}%
+          </div>
+          <small class="text-muted d-block mt-1" style="font-family: 'Patrick Hand', cursive;">
+            Percentage saved
+          </small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       3. VISUAL CHARTS SECTION (CHART.JS)
+       ======================================================== -->
+  <div class="row g-4 mb-4">
+
+    <!-- CHART 1: EXPENSE CATEGORY DISTRIBUTION (DOUGHNUT) -->
+    <div class="col-12 col-lg-5">
+      <div class="doodle-card h-100 p-3 p-md-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="fw-bold mb-0 text-dark" style="font-family: 'Fredoka', cursive;">
+            Category Share
+          </h5>
+          <span class="badge bg-light text-dark border">
+            {% if analytics.timeframe == 'day' %}Day{% elif analytics.timeframe == 'year' %}Year{% else %}Month{% endif %} View
+          </span>
+        </div>
+
+        {% if analytics.expense_categories and analytics.expense_categories|length > 0 %}
+          <div class="chart-container-box">
+            <canvas id="categoryDoughnutChart"></canvas>
+          </div>
+        {% else %}
+          <div class="text-center py-5">
+            <h6 class="fw-bold text-dark mb-1" style="font-family: 'Fredoka', cursive;">No Expense Data</h6>
+            <p class="text-muted small" style="font-family: 'Patrick Hand', cursive; font-size: 1.1rem;">
+              No expenses recorded for {{ analytics.target_period }}.
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- CHART 2: CASH FLOW TREND OVER TIME (BAR / LINE) -->
+    <div class="col-12 col-lg-7">
+      <div class="doodle-card h-100 p-3 p-md-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="fw-bold mb-0 text-dark" style="font-family: 'Fredoka', cursive;">
+            Cash Flow Timeline
+          </h5>
+          <span class="badge bg-light text-dark border">Income vs Expense</span>
+        </div>
+
+        <div class="chart-container-box">
+          <canvas id="cashflowTrendChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================
+       4. CATEGORIZED EXPENSE BREAKDOWN TABLE
+       ======================================================== -->
+  <div class="doodle-card p-3 p-md-4 mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h5 class="fw-bold mb-0 text-dark" style="font-family: 'Fredoka', cursive;">
+        Detailed Category Breakdown
+      </h5>
+      <span class="text-muted small" style="font-family: 'Patrick Hand', cursive; font-size: 1.1rem;">
+        Period: {{ analytics.target_period }}
+      </span>
+    </div>
+
+    {% if analytics.expense_categories and analytics.expense_categories|length > 0 %}
+      <div class="doodle-table-responsive">
+        <table class="doodle-table align-middle">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th class="text-center">Entries</th>
+              <th class="text-end">Total Amount</th>
+              <th class="text-end" style="width: 200px;">Share (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in analytics.expense_categories %}
+              <tr class="row-expense">
+                <td class="fw-bold">
+                  <span class="table-cat-tag">{{ item.category }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-light text-dark border">{{ item.count }}</span>
+                </td>
+                <td class="text-end fw-bold text-peach-dark">
+                  {{ item.total | format_currency }}
+                </td>
+                <td class="text-end">
+                  <div class="d-flex align-items-center justify-content-end gap-2">
+                    <span class="fw-bold small">{{ item.percentage }}%</span>
+                    <div class="doodle-progress-bar flex-grow-1" style="max-width: 100px; height: 10px;">
+                      <div class="progress-segment segment-expense" style="width: {{ item.percentage }}%;"></div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted text-center py-4 mb-0" style="font-family: 'Patrick Hand', cursive; font-size: 1.2rem;">
+        No expenses to display for this timeframe. Add transactions to see breakdown insights!
+      </p>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Embed Analytics Data for Chart.js Script -->
+<script id="analyticsData" type="application/json">
+  {{ analytics | tojson | safe }}
+</script>
+
+<!-- Custom Charts Initialization Script -->
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

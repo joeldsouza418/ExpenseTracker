@@ -158,6 +158,29 @@ class ExpenseTrackerTestCase(unittest.TestCase):
         )
         self.assertIn(b"Please select a valid transaction type", resp_type.data)
 
+    def test_analytics_summary_route(self):
+        """Test GET /summary route for day, month, and year views."""
+        database.add_transaction("Income", "Salary", 4000.00, "2026-09-10", "", self.temp_db_path)
+        database.add_transaction("Expense", "Rent", 1200.00, "2026-09-10", "", self.temp_db_path)
+        database.add_transaction("Expense", "Groceries", 150.00, "2026-09-05", "", self.temp_db_path)
+
+        # Test month view
+        response_month = self.client.get("/summary?timeframe=month&period=2026-09")
+        self.assertEqual(response_month.status_code, 200)
+        self.assertIn(b"SPENDING SUMMARY", response_month.data)
+        self.assertIn(b"4,000.00", response_month.data)
+
+        # Test day view
+        response_day = self.client.get("/summary?timeframe=day&period=2026-09-10")
+        self.assertEqual(response_day.status_code, 200)
+        self.assertIn(b"1,200.00", response_day.data)
+
+        # Test year view
+        response_year = self.client.get("/summary?timeframe=year&period=2026")
+        self.assertEqual(response_year.status_code, 200)
+        self.assertIn(b"2026", response_year.data)
+
 
 if __name__ == "__main__":
     unittest.main()
+
