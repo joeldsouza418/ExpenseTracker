@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <!-- ========================================================
+       1. FINANCIAL SUMMARY SECTION (CARDS)
+       ======================================================== -->
+  <section class="mb-4">
+    <div class="row g-3">
+      <!-- Total Income Card -->
+      <div class="col-12 col-md-4">
+        <div class="stat-card stat-income">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="stat-label">Total Income</span>
+              <div class="stat-value text-success mt-1">
+                {{ summary.total_income | format_currency }}
+              </div>
+              <div class="small text-muted mt-2 d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-up-right text-success"></i>
+                <span>Recorded earnings</span>
+              </div>
+            </div>
+            <div class="stat-icon stat-icon-income">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Expense Card -->
+      <div class="col-12 col-md-4">
+        <div class="stat-card stat-expense">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="stat-label">Total Expense</span>
+              <div class="stat-value text-danger mt-1">
+                {{ summary.total_expense | format_currency }}
+              </div>
+              <div class="small text-muted mt-2 d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-down-right text-danger"></i>
+                <span>Recorded spendings</span>
+              </div>
+            </div>
+            <div class="stat-icon stat-icon-expense">
+              <i class="bi bi-graph-down-arrow"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Balance Card -->
+      <div class="col-12 col-md-4">
+        <div class="stat-card stat-balance">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="stat-label">Current Balance</span>
+              <div class="stat-value {% if summary.balance < 0 %}text-danger{% else %}text-primary{% endif %} mt-1">
+                {{ summary.balance | format_currency }}
+              </div>
+              <div class="small text-muted mt-2 d-flex align-items-center gap-1">
+                {% if summary.balance >= 0 %}
+                  <i class="bi bi-shield-check text-success"></i>
+                  <span>Net positive cashflow</span>
+                {% else %}
+                  <i class="bi bi-exclamation-triangle text-danger"></i>
+                  <span>Expenses exceed income</span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="stat-icon stat-icon-balance">
+              <i class="bi bi-wallet-fill"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       2. MAIN WORKSPACE: FORM + TRANSACTION HISTORY
+       ======================================================== -->
+  <div class="row g-4">
+
+    <!-- LEFT COLUMN: ADD TRANSACTION FORM -->
+    <div class="col-12 col-lg-5" id="addTransactionSection">
+      <div class="app-card p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+            <i class="bi bi-plus-circle-dotted text-primary"></i> Add Transaction
+          </h5>
+          <span class="badge bg-light text-secondary border">Quick Entry</span>
+        </div>
+
+        <form action="{{ url_for('add_transaction') }}" method="POST" id="transactionForm" novalidate>
+          <!-- 1. Transaction Type Selector -->
+          <div class="mb-3">
+            <label class="form-label">Transaction Type <span class="text-danger">*</span></label>
+            <input type="hidden" name="type" id="typeInput" value="Expense">
+            <div class="type-selector-group">
+              <button type="button" class="type-btn" id="typeIncomeBtn">
+                <i class="bi bi-arrow-up-circle-fill text-success"></i> Income
+              </button>
+              <button type="button" class="type-btn active type-expense" id="typeExpenseBtn">
+                <i class="bi bi-arrow-down-circle-fill text-danger"></i> Expense
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Category Input & Quick Presets -->
+          <div class="mb-3">
+            <label for="categoryInput" class="form-label">Category <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-tag"></i></span>
+              <input type="text" class="form-control" id="categoryInput" name="category" placeholder="e.g. Groceries, Rent, Salary" required>
+            </div>
+            <div class="invalid-feedback">Please enter or choose a category.</div>
+            
+            <!-- Dynamic Category Pills -->
+            <div class="mt-2">
+              <span class="text-muted small fw-semibold">Quick picks:</span>
+              <div class="category-pills-wrap" id="categoryPills">
+                <!-- Injected via JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Amount Input -->
+          <div class="mb-3">
+            <label for="amountInput" class="form-label">Amount <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+              <input type="number" step="0.01" min="0.01" class="form-control" id="amountInput" name="amount" placeholder="0.00" required>
+            </div>
+            <div class="invalid-feedback">Amount must be a number greater than 0.</div>
+          </div>
+
+          <!-- 4. Date Input -->
+          <div class="mb-3">
+            <label for="dateInput" class="form-label">Date <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+              <input type="date" class="form-control" id="dateInput" name="date" value="{{ today }}" required>
+            </div>
+            <div class="invalid-feedback">Please select a valid date.</div>
+          </div>
+
+          <!-- 5. Optional Note -->
+          <div class="mb-4">
+            <label for="noteInput" class="form-label">Description / Note <span class="text-muted fw-normal">(optional)</span></label>
+            <input type="text" class="form-control" id="noteInput" name="note" placeholder="e.g. Client project payment or weekly grocery run">
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary-gradient w-100 d-flex align-items-center justify-content-center gap-2 py-2">
+            <i class="bi bi-check-lg fs-5"></i>
+            <span>Save Transaction</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Quick Breakdown Summary (if transactions exist) -->
+      {% if summary.transaction_count > 0 %}
+      <div class="app-card p-4 mt-4">
+        <h6 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+          <i class="bi bi-pie-chart text-info"></i> Financial Overview
+        </h6>
+        
+        <!-- Income vs Expense progress bar -->
+        {% set total_volume = summary.total_income + summary.total_expense %}
+        {% if total_volume > 0 %}
+          {% set inc_pct = (summary.total_income / total_volume * 100) | round(1) %}
+          {% set exp_pct = (summary.total_expense / total_volume * 100) | round(1) %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small text-muted mb-1">
+              <span><i class="bi bi-circle-fill text-success" style="font-size: 8px;"></i> Income {{ inc_pct }}%</span>
+              <span>Expense {{ exp_pct }}% <i class="bi bi-circle-fill text-danger" style="font-size: 8px;"></i></span>
+            </div>
+            <div class="progress progress-thin">
+              <div class="progress-bar bg-success" role="progressbar" style="width: {{ inc_pct }}%" aria-valuenow="{{ inc_pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="progress-bar bg-danger" role="progressbar" style="width: {{ exp_pct }}%" aria-valuenow="{{ exp_pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center border-top pt-2 small text-muted">
+          <span>Total Transactions</span>
+          <span class="badge bg-secondary-subtle text-secondary fw-bold">{{ summary.transaction_count }}</span>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- RIGHT COLUMN: TRANSACTION HISTORY TABLE -->
+    <div class="col-12 col-lg-7">
+      <div class="app-card p-4">
+        
+        <!-- Header & Search/Filter Controls -->
+        <div class="d-flex flex-column flex-md-row md:align-items-center justify-content-between gap-3 mb-4">
+          <div>
+            <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+              <i class="bi bi-clock-history text-primary"></i> Transaction History
+            </h5>
+            <small class="text-muted">Showing all recorded financial entries</small>
+          </div>
+
+          <!-- Filter Pills -->
+          <div class="d-flex align-items-center gap-1">
+            <a href="{{ url_for('index', search=search_query) }}" class="filter-pill {% if not filter_type %}active{% endif %}">
+              All
+            </a>
+            <a href="{{ url_for('index', type='Income', search=search_query) }}" class="filter-pill {% if filter_type == 'Income' %}active{% endif %}">
+              Income
+            </a>
+            <a href="{{ url_for('index', type='Expense', search=search_query) }}" class="filter-pill {% if filter_type == 'Expense' %}active{% endif %}">
+              Expense
+            </a>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <form action="{{ url_for('index') }}" method="GET" class="mb-3">
+          {% if filter_type %}
+            <input type="hidden" name="type" value="{{ filter_type }}">
+          {% endif %}
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Search by category or note..." value="{{ search_query }}">
+            {% if search_query %}
+              <a href="{{ url_for('index', type=filter_type) }}" class="btn btn-outline-secondary d-flex align-items-center">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            {% endif %}
+            <button type="submit" class="btn btn-outline-secondary px-3">Filter</button>
+          </div>
+        </form>
+
+        <!-- Transaction Table -->
+        {% if transactions and transactions|length > 0 %}
+          <div class="custom-table-container table-responsive">
+            <table class="table table-custom align-middle">
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Category</th>
+                  <th scope="col" class="text-end">Amount</th>
+                  <th scope="col" class="text-center" style="width: 50px;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for tx in transactions %}
+                  <tr>
+                    <!-- Date -->
+                    <td class="text-nowrap">
+                      <span class="fw-semibold text-dark">{{ tx.date }}</span>
+                      {% if tx.note %}
+                        <div class="text-muted small text-truncate" style="max-width: 140px;" title="{{ tx.note }}">
+                          <i class="bi bi-chat-left-text me-1"></i>{{ tx.note }}
+                        </div>
+                      {% endif %}
+                    </td>
+
+                    <!-- Type Badge -->
+                    <td>
+                      {% if tx.type == 'Income' %}
+                        <span class="badge-income">
+                          <i class="bi bi-arrow-up-right"></i> Income
+                        </span>
+                      {% else %}
+                        <span class="badge-expense">
+                          <i class="bi bi-arrow-down-right"></i> Expense
+                        </span>
+                      {% endif %}
+                    </td>
+
+                    <!-- Category -->
+                    <td>
+                      <span class="cat-badge">
+                        <i class="bi bi-tag-fill text-muted" style="font-size: 0.75rem;"></i>
+                        {{ tx.category }}
+                      </span>
+                    </td>
+
+                    <!-- Amount -->
+                    <td class="text-end text-nowrap">
+                      {% if tx.type == 'Income' %}
+                        <span class="amount-income">+{{ tx.amount | format_currency }}</span>
+                      {% else %}
+                        <span class="amount-expense">-{{ tx.amount | format_currency }}</span>
+                      {% endif %}
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="text-center">
+                      <button type="button" 
+                              class="btn-delete-action" 
+                              data-bs-toggle="modal" 
+                              data-bs-target="#deleteConfirmModal"
+                              data-tx-id="{{ tx.id }}"
+                              data-tx-desc="{{ tx.type }} of {{ tx.amount | format_currency }} ({{ tx.category }})"
+                              title="Delete Transaction">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <!-- Empty State -->
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i class="bi bi-receipt-cutoff"></i>
+            </div>
+            <h6 class="fw-bold text-dark mb-1">No Transactions Found</h6>
+            {% if search_query or filter_type %}
+              <p class="text-muted small mb-3">No records match your active filters.</p>
+              <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
+            {% else %}
+              <p class="text-muted small mb-3">Your transaction list is empty. Add your first income or expense to get started!</p>
+              <a href="#addTransactionSection" class="btn btn-sm btn-primary-gradient">
+                <i class="bi bi-plus-lg me-1"></i> Add Transaction
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================================
+     DELETE CONFIRMATION MODAL
+     ======================================================== -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+      <div class="modal-body text-center p-4">
+        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 50%; background: #fee2e2; color: #ef4444; font-size: 1.5rem;">
+          <i class="bi bi-trash3-fill"></i>
+        </div>
+        <h6 class="fw-bold mb-2">Delete Transaction?</h6>
+        <p class="text-muted small mb-4">Are you sure you want to remove <span id="deleteModalDesc" class="fw-semibold text-dark"></span>? This action cannot be undone.</p>
+        <form id="deleteForm" method="POST" action="">
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-light w-50 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger w-50 fw-semibold">Delete</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

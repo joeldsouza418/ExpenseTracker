@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Expense Tracker — Smart Financial Management{% endblock %}</title>
+  <meta name="description" content="A clean, responsive Expense Tracker to manage income, track expenses, and view real-time financial balance.">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+        <div class="brand-icon">
+          <i class="bi bi-wallet2 fs-5"></i>
+        </div>
+        <div>
+          <span class="fw-bold fs-5 text-dark">FinTrack</span>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-1" style="font-size: 0.65rem; vertical-align: middle;">PRO</span>
+        </div>
+      </a>
+
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-muted d-none d-md-inline small">
+          <i class="bi bi-calendar3 me-1"></i> Today: <span class="fw-semibold text-dark">{{ today }}</span>
+        </span>
+        <a href="#addTransactionSection" class="btn btn-sm btn-primary-gradient d-inline-flex align-items-center gap-1">
+          <i class="bi bi-plus-circle"></i> <span>New Record</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages Alert Banner -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-custom alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+            {% if category == 'success' %}
+              <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            {% elif category == 'danger' %}
+              <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+            {% else %}
+              <i class="bi bi-info-circle-fill text-info fs-5"></i>
+            {% endif %}
+            <div class="flex-grow-1 fw-medium">{{ message }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main Content Block -->
+  <main class="py-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 mt-5 text-center text-muted small border-top bg-white">
+    <div class="container">
+      <p class="mb-0">Designed & built with Flask, SQLite & Bootstrap 5 &bull; Expense Tracker</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
