@@ -1,309 +1,406 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard — Expense Tracker{% endblock %}
+{% block title %}Personal Money Snapshot — Dashboard{% endblock %}
 
 {% block content %}
 <div class="container">
 
   <!-- ========================================================
-       1. FINANCIAL SUMMARY SECTION (CARDS)
+       1. THE 4 HAND-DRAWN FEATURE & METRIC CARDS
        ======================================================== -->
   <section class="mb-4">
     <div class="row g-3">
-      <!-- Total Income Card -->
-      <div class="col-12 col-md-4">
-        <div class="stat-card stat-income">
-          <div class="d-flex align-items-center justify-content-between">
+      
+      <!-- Card 1: 1. LOG INCOME -->
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="doodle-card card-income-theme">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="doodle-pill pill-purple">1. LOG INCOME</span>
+            <span class="doodle-check check-purple">✓</span>
+          </div>
+          
+          <div class="d-flex align-items-center gap-3 my-2">
+            <div class="doodle-icon-box bg-purple-tint">
+              <span class="fs-2">👛</span>
+            </div>
             <div>
-              <span class="stat-label">Total Income</span>
-              <div class="stat-value text-success mt-1">
+              <span class="doodle-metric-label">Total Income</span>
+              <div class="doodle-metric-value text-purple-dark">
                 {{ summary.total_income | format_currency }}
               </div>
-              <div class="small text-muted mt-2 d-flex align-items-center gap-1">
-                <i class="bi bi-arrow-up-right text-success"></i>
-                <span>Recorded earnings</span>
-              </div>
-            </div>
-            <div class="stat-icon stat-icon-income">
-              <i class="bi bi-graph-up-arrow"></i>
             </div>
           </div>
+          
+          <ul class="doodle-bullet-list mt-2 mb-0">
+            <li>Record every income in seconds.</li>
+            <li>Stay on top of money coming in.</li>
+          </ul>
         </div>
       </div>
 
-      <!-- Total Expense Card -->
-      <div class="col-12 col-md-4">
-        <div class="stat-card stat-expense">
-          <div class="d-flex align-items-center justify-content-between">
+      <!-- Card 2: 2. TRACK EXPENSES -->
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="doodle-card card-expense-theme">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="doodle-pill pill-peach">2. TRACK EXPENSES</span>
+            <span class="doodle-check check-peach">✓</span>
+          </div>
+          
+          <div class="d-flex align-items-center gap-3 my-2">
+            <div class="doodle-icon-box bg-peach-tint">
+              <span class="fs-2">🧺</span>
+            </div>
             <div>
-              <span class="stat-label">Total Expense</span>
-              <div class="stat-value text-danger mt-1">
+              <span class="doodle-metric-label">Total Expenses</span>
+              <div class="doodle-metric-value text-peach-dark">
                 {{ summary.total_expense | format_currency }}
               </div>
-              <div class="small text-muted mt-2 d-flex align-items-center gap-1">
-                <i class="bi bi-arrow-down-right text-danger"></i>
-                <span>Recorded spendings</span>
-              </div>
-            </div>
-            <div class="stat-icon stat-icon-expense">
-              <i class="bi bi-graph-down-arrow"></i>
             </div>
           </div>
+          
+          <ul class="doodle-bullet-list mt-2 mb-0">
+            <li>Log daily spending with categories.</li>
+            <li>See where your money goes.</li>
+          </ul>
         </div>
       </div>
 
-      <!-- Current Balance Card -->
-      <div class="col-12 col-md-4">
-        <div class="stat-card stat-balance">
-          <div class="d-flex align-items-center justify-content-between">
+      <!-- Card 3: 3. SEE CASH FLOW -->
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="doodle-card card-cashflow-theme">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="doodle-pill pill-green">3. SEE CASH FLOW</span>
+            <span class="doodle-check check-green">✓</span>
+          </div>
+          
+          <div class="d-flex align-items-center gap-3 my-2">
+            <div class="doodle-icon-box bg-green-tint">
+              <span class="fs-2">📈</span>
+            </div>
             <div>
-              <span class="stat-label">Current Balance</span>
-              <div class="stat-value {% if summary.balance < 0 %}text-danger{% else %}text-primary{% endif %} mt-1">
+              <span class="doodle-metric-label">Current Balance</span>
+              <div class="doodle-metric-value {% if summary.balance < 0 %}text-danger{% else %}text-green-dark{% endif %}">
                 {{ summary.balance | format_currency }}
               </div>
-              <div class="small text-muted mt-2 d-flex align-items-center gap-1">
-                {% if summary.balance >= 0 %}
-                  <i class="bi bi-shield-check text-success"></i>
-                  <span>Net positive cashflow</span>
-                {% else %}
-                  <i class="bi bi-exclamation-triangle text-danger"></i>
-                  <span>Expenses exceed income</span>
-                {% endif %}
-              </div>
-            </div>
-            <div class="stat-icon stat-icon-balance">
-              <i class="bi bi-wallet-fill"></i>
             </div>
           </div>
+          
+          <ul class="doodle-bullet-list mt-2 mb-0">
+            <li>Watch your balance move each day.</li>
+            <li>Know what you can spend with ease.</li>
+          </ul>
         </div>
       </div>
+
+      <!-- Card 4: 4. REVIEW CATEGORIES -->
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="doodle-card card-review-theme">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="doodle-pill pill-rose">4. REVIEW CATEGORIES</span>
+            <span class="doodle-check check-rose">✓</span>
+          </div>
+          
+          <div class="d-flex align-items-center gap-3 my-2">
+            <div class="doodle-icon-box bg-rose-tint">
+              <span class="fs-2">🥧</span>
+            </div>
+            <div>
+              <span class="doodle-metric-label">Total Entries</span>
+              <div class="doodle-metric-value text-rose-dark">
+                {{ summary.transaction_count }} records
+              </div>
+            </div>
+          </div>
+          
+          <ul class="doodle-bullet-list mt-2 mb-0">
+            <li>See which categories take the most.</li>
+            <li>Make smarter choices next month.</li>
+          </ul>
+        </div>
+      </div>
+
     </div>
   </section>
 
   <!-- ========================================================
-       2. MAIN WORKSPACE: FORM + TRANSACTION HISTORY
+       2. WORKSPACE: HTML TRACKER (FORM) & DASHBOARD (LOG)
        ======================================================== -->
   <div class="row g-4">
 
-    <!-- LEFT COLUMN: ADD TRANSACTION FORM -->
+    <!-- LEFT COLUMN: HTML TRACKER FORM -->
     <div class="col-12 col-lg-5" id="addTransactionSection">
-      <div class="app-card p-4">
-        <div class="d-flex align-items-center justify-content-between mb-3">
-          <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
-            <i class="bi bi-plus-circle-dotted text-primary"></i> Add Transaction
-          </h5>
-          <span class="badge bg-light text-secondary border">Quick Entry</span>
-        </div>
-
-        <form action="{{ url_for('add_transaction') }}" method="POST" id="transactionForm" novalidate>
-          <!-- 1. Transaction Type Selector -->
-          <div class="mb-3">
-            <label class="form-label">Transaction Type <span class="text-danger">*</span></label>
-            <input type="hidden" name="type" id="typeInput" value="Expense">
-            <div class="type-selector-group">
-              <button type="button" class="type-btn" id="typeIncomeBtn">
-                <i class="bi bi-arrow-up-circle-fill text-success"></i> Income
-              </button>
-              <button type="button" class="type-btn active type-expense" id="typeExpenseBtn">
-                <i class="bi bi-arrow-down-circle-fill text-danger"></i> Expense
-              </button>
-            </div>
-          </div>
-
-          <!-- 2. Category Input & Quick Presets -->
-          <div class="mb-3">
-            <label for="categoryInput" class="form-label">Category <span class="text-danger">*</span></label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-tag"></i></span>
-              <input type="text" class="form-control" id="categoryInput" name="category" placeholder="e.g. Groceries, Rent, Salary" required>
-            </div>
-            <div class="invalid-feedback">Please enter or choose a category.</div>
-            
-            <!-- Dynamic Category Pills -->
-            <div class="mt-2">
-              <span class="text-muted small fw-semibold">Quick picks:</span>
-              <div class="category-pills-wrap" id="categoryPills">
-                <!-- Injected via JavaScript -->
-              </div>
-            </div>
-          </div>
-
-          <!-- 3. Amount Input -->
-          <div class="mb-3">
-            <label for="amountInput" class="form-label">Amount <span class="text-danger">*</span></label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
-              <input type="number" step="0.01" min="0.01" class="form-control" id="amountInput" name="amount" placeholder="0.00" required>
-            </div>
-            <div class="invalid-feedback">Amount must be a number greater than 0.</div>
-          </div>
-
-          <!-- 4. Date Input -->
-          <div class="mb-3">
-            <label for="dateInput" class="form-label">Date <span class="text-danger">*</span></label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
-              <input type="date" class="form-control" id="dateInput" name="date" value="{{ today }}" required>
-            </div>
-            <div class="invalid-feedback">Please select a valid date.</div>
-          </div>
-
-          <!-- 5. Optional Note -->
-          <div class="mb-4">
-            <label for="noteInput" class="form-label">Description / Note <span class="text-muted fw-normal">(optional)</span></label>
-            <input type="text" class="form-control" id="noteInput" name="note" placeholder="e.g. Client project payment or weekly grocery run">
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="btn btn-primary-gradient w-100 d-flex align-items-center justify-content-center gap-2 py-2">
-            <i class="bi bi-check-lg fs-5"></i>
-            <span>Save Transaction</span>
-          </button>
-        </form>
+      
+      <!-- Section Header with Doodle Speed Lines -->
+      <div class="text-center mb-2">
+        <h4 class="doodle-section-title mb-0">彡 HTML TRACKER ミ</h4>
+        <p class="doodle-section-subtitle text-muted">Fast daily entry. Clean and focused. ♡</p>
       </div>
 
-      <!-- Quick Breakdown Summary (if transactions exist) -->
-      {% if summary.transaction_count > 0 %}
-      <div class="app-card p-4 mt-4">
-        <h6 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
-          <i class="bi bi-pie-chart text-info"></i> Financial Overview
-        </h6>
-        
-        <!-- Income vs Expense progress bar -->
-        {% set total_volume = summary.total_income + summary.total_expense %}
-        {% if total_volume > 0 %}
-          {% set inc_pct = (summary.total_income / total_volume * 100) | round(1) %}
-          {% set exp_pct = (summary.total_expense / total_volume * 100) | round(1) %}
-          <div class="mb-3">
-            <div class="d-flex justify-content-between small text-muted mb-1">
-              <span><i class="bi bi-circle-fill text-success" style="font-size: 8px;"></i> Income {{ inc_pct }}%</span>
-              <span>Expense {{ exp_pct }}% <i class="bi bi-circle-fill text-danger" style="font-size: 8px;"></i></span>
+      <div class="tracker-card">
+        <!-- Top Green Strip Header (matching the image) -->
+        <div class="tracker-card-header">
+          <span class="tracker-header-title">Add transaction</span>
+          <span class="tracker-header-sparkle">✦</span>
+        </div>
+
+        <div class="p-3 p-md-4">
+          <form action="{{ url_for('add_transaction') }}" method="POST" id="transactionForm" novalidate>
+            
+            <!-- Type Selector -->
+            <div class="mb-3">
+              <label class="doodle-label">Transaction Type <span class="text-danger">*</span></label>
+              <input type="hidden" name="type" id="typeInput" value="Expense">
+              <div class="doodle-type-toggle">
+                <button type="button" class="doodle-type-btn" id="typeIncomeBtn">
+                  <span>👛</span> Income
+                </button>
+                <button type="button" class="doodle-type-btn active type-expense" id="typeExpenseBtn">
+                  <span>🧺</span> Expense
+                </button>
+              </div>
             </div>
-            <div class="progress progress-thin">
-              <div class="progress-bar bg-success" role="progressbar" style="width: {{ inc_pct }}%" aria-valuenow="{{ inc_pct }}" aria-valuemin="0" aria-valuemax="100"></div>
-              <div class="progress-bar bg-danger" role="progressbar" style="width: {{ exp_pct }}%" aria-valuenow="{{ exp_pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+
+            <!-- Category Input & Quick Presets -->
+            <div class="mb-3">
+              <label for="categoryInput" class="doodle-label">Category <span class="text-danger">*</span></label>
+              <div class="doodle-input-wrap">
+                <span class="doodle-input-icon">🏷️</span>
+                <input type="text" class="doodle-input" id="categoryInput" name="category" placeholder="e.g. Groceries, Rent, Salary" required>
+              </div>
+              <div class="invalid-feedback doodle-invalid">Please enter or pick a category.</div>
+              
+              <!-- Dynamic Category Pills -->
+              <div class="mt-2">
+                <span class="text-muted small fw-bold" style="font-family: 'Patrick Hand', cursive; font-size: 1.05rem;">
+                  Quick picks:
+                </span>
+                <div class="category-pills-wrap" id="categoryPills">
+                  <!-- Injected via JavaScript -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Amount Input -->
+            <div class="mb-3">
+              <label for="amountInput" class="doodle-label">Amount ($) <span class="text-danger">*</span></label>
+              <div class="doodle-input-wrap">
+                <span class="doodle-input-icon">💵</span>
+                <input type="number" step="0.01" min="0.01" class="doodle-input" id="amountInput" name="amount" placeholder="0.00" required>
+              </div>
+              <div class="invalid-feedback doodle-invalid">Amount must be greater than 0.</div>
+            </div>
+
+            <!-- Date Input -->
+            <div class="mb-3">
+              <label for="dateInput" class="doodle-label">Date <span class="text-danger">*</span></label>
+              <div class="doodle-input-wrap">
+                <span class="doodle-input-icon">📅</span>
+                <input type="date" class="doodle-input" id="dateInput" name="date" value="{{ today }}" required>
+              </div>
+              <div class="invalid-feedback doodle-invalid">Please choose a valid date.</div>
+            </div>
+
+            <!-- Optional Description / Note -->
+            <div class="mb-4">
+              <label for="noteInput" class="doodle-label">Description <span class="text-muted fw-normal">(optional)</span></label>
+              <div class="doodle-input-wrap">
+                <span class="doodle-input-icon">✏️</span>
+                <input type="text" class="doodle-input" id="noteInput" name="note" placeholder="e.g. Freelance project or supermarket run">
+              </div>
+            </div>
+
+            <!-- Form Action Buttons: Add & Clear -->
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn-doodle-primary flex-grow-1">
+                <span>Add Entry</span>
+              </button>
+              <button type="reset" class="btn-doodle-secondary px-3" id="clearBtn">
+                <span>Clear</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Bottom Footer Badges (matching image: Quick to update, Works offline, Yours, always) -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top border-ink-light small text-muted tracker-tag-row">
+            <span>☆ Quick to update</span>
+            <span>☆ Works offline</span>
+            <span>☆ Yours, always ♡</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Review Categories Breakdown Box -->
+      {% if summary.transaction_count > 0 %}
+      <div class="doodle-card mt-4 p-3 p-md-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h6 class="fw-bold mb-0 text-ink d-flex align-items-center gap-2" style="font-family: 'Fredoka', cursive;">
+            <span>🥧</span> Spending Ratio
+          </h6>
+          <span class="badge bg-light text-dark border border-ink">Overview</span>
+        </div>
+
+        {% set total_vol = summary.total_income + summary.total_expense %}
+        {% if total_vol > 0 %}
+          {% set inc_pct = (summary.total_income / total_vol * 100) | round(1) %}
+          {% set exp_pct = (summary.total_expense / total_vol * 100) | round(1) %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small text-muted mb-1" style="font-family: 'Patrick Hand', cursive; font-size: 1.1rem;">
+              <span>👛 Income: {{ inc_pct }}%</span>
+              <span>🧺 Expense: {{ exp_pct }}%</span>
+            </div>
+            <div class="doodle-progress-bar">
+              <div class="progress-segment segment-income" style="width: {{ inc_pct }}%;"></div>
+              <div class="progress-segment segment-expense" style="width: {{ exp_pct }}%;"></div>
             </div>
           </div>
         {% endif %}
 
-        <div class="d-flex justify-content-between align-items-center border-top pt-2 small text-muted">
-          <span>Total Transactions</span>
-          <span class="badge bg-secondary-subtle text-secondary fw-bold">{{ summary.transaction_count }}</span>
-        </div>
+        <!-- Top Categories List -->
+        {% if breakdown.Expense and breakdown.Expense|length > 0 %}
+          <div class="mt-3">
+            <span class="d-block small text-muted mb-2 fw-bold" style="font-family: 'Patrick Hand', cursive; font-size: 1.05rem;">
+              Expenses by Category:
+            </span>
+            <div class="d-flex flex-wrap gap-2">
+              {% for item in breakdown.Expense[:5] %}
+                <span class="cat-pill cat-pill-expense">
+                  {{ item.category }}: <strong>{{ item.total | format_currency }}</strong>
+                </span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
       </div>
       {% endif %}
+
     </div>
 
-    <!-- RIGHT COLUMN: TRANSACTION HISTORY TABLE -->
+    <!-- RIGHT COLUMN: DASHBOARD & TRANSACTION LOG -->
     <div class="col-12 col-lg-7">
-      <div class="app-card p-4">
-        
-        <!-- Header & Search/Filter Controls -->
-        <div class="d-flex flex-column flex-md-row md:align-items-center justify-content-between gap-3 mb-4">
-          <div>
-            <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
-              <i class="bi bi-clock-history text-primary"></i> Transaction History
-            </h5>
-            <small class="text-muted">Showing all recorded financial entries</small>
-          </div>
 
-          <!-- Filter Pills -->
+      <!-- Section Header with Doodle Speed Lines -->
+      <div class="text-center mb-2">
+        <h4 class="doodle-section-title mb-0">彡 TRANSACTION LOG DASHBOARD ミ</h4>
+        <p class="doodle-section-subtitle text-muted">Big picture insights for better decisions. ♡</p>
+      </div>
+
+      <div class="doodle-card p-3 p-md-4">
+        
+        <!-- Top Mini Stats Ribbon (matching image: Total Income, Total Expenses, Balance to Date) -->
+        <div class="row g-2 mb-3 text-center">
+          <div class="col-4">
+            <div class="mini-stat-box box-income">
+              <div class="mini-stat-label">Total Income</div>
+              <div class="mini-stat-val text-green-dark">{{ summary.total_income | format_currency }}</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="mini-stat-box box-expense">
+              <div class="mini-stat-label">Total Expenses</div>
+              <div class="mini-stat-val text-peach-dark">{{ summary.total_expense | format_currency }}</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="mini-stat-box box-balance">
+              <div class="mini-stat-label">Balance to Date</div>
+              <div class="mini-stat-val text-purple-dark">{{ summary.balance | format_currency }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Tabs & Search Bar -->
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+          <!-- Filter Tabs -->
           <div class="d-flex align-items-center gap-1">
-            <a href="{{ url_for('index', search=search_query) }}" class="filter-pill {% if not filter_type %}active{% endif %}">
-              All
+            <a href="{{ url_for('index', search=search_query) }}" class="doodle-filter-tab {% if not filter_type %}active{% endif %}">
+              All ({{ summary.transaction_count }})
             </a>
-            <a href="{{ url_for('index', type='Income', search=search_query) }}" class="filter-pill {% if filter_type == 'Income' %}active{% endif %}">
+            <a href="{{ url_for('index', type='Income', search=search_query) }}" class="doodle-filter-tab tab-income {% if filter_type == 'Income' %}active{% endif %}">
               Income
             </a>
-            <a href="{{ url_for('index', type='Expense', search=search_query) }}" class="filter-pill {% if filter_type == 'Expense' %}active{% endif %}">
+            <a href="{{ url_for('index', type='Expense', search=search_query) }}" class="doodle-filter-tab tab-expense {% if filter_type == 'Expense' %}active{% endif %}">
               Expense
             </a>
           </div>
+
+          <!-- Search Form -->
+          <form action="{{ url_for('index') }}" method="GET" class="d-flex align-items-center gap-1">
+            {% if filter_type %}
+              <input type="hidden" name="type" value="{{ filter_type }}">
+            {% endif %}
+            <div class="doodle-search-wrap">
+              <input type="text" name="search" class="doodle-search-input" placeholder="Search entries..." value="{{ search_query }}">
+              {% if search_query %}
+                <a href="{{ url_for('index', type=filter_type) }}" class="search-clear-btn" title="Clear Search">×</a>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn-doodle-search">Find</button>
+          </form>
         </div>
 
-        <!-- Search Bar -->
-        <form action="{{ url_for('index') }}" method="GET" class="mb-3">
-          {% if filter_type %}
-            <input type="hidden" name="type" value="{{ filter_type }}">
-          {% endif %}
-          <div class="input-group">
-            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-            <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Search by category or note..." value="{{ search_query }}">
-            {% if search_query %}
-              <a href="{{ url_for('index', type=filter_type) }}" class="btn btn-outline-secondary d-flex align-items-center">
-                <i class="bi bi-x-lg"></i>
-              </a>
-            {% endif %}
-            <button type="submit" class="btn btn-outline-secondary px-3">Filter</button>
-          </div>
-        </form>
-
-        <!-- Transaction Table -->
+        <!-- The Hand-Drawn Notebook / Excel Style Table -->
         {% if transactions and transactions|length > 0 %}
-          <div class="custom-table-container table-responsive">
-            <table class="table table-custom align-middle">
+          <div class="doodle-table-responsive">
+            <table class="doodle-table">
               <thead>
                 <tr>
-                  <th scope="col">Date</th>
-                  <th scope="col">Type</th>
-                  <th scope="col">Category</th>
-                  <th scope="col" class="text-end">Amount</th>
-                  <th scope="col" class="text-center" style="width: 50px;">Action</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Category</th>
+                  <th>Description</th>
+                  <th class="text-end">Amount</th>
+                  <th class="text-center" style="width: 45px;">Del</th>
                 </tr>
               </thead>
               <tbody>
                 {% for tx in transactions %}
-                  <tr>
+                  <tr class="{% if tx.type == 'Income' %}row-income{% else %}row-expense{% endif %}">
                     <!-- Date -->
-                    <td class="text-nowrap">
-                      <span class="fw-semibold text-dark">{{ tx.date }}</span>
-                      {% if tx.note %}
-                        <div class="text-muted small text-truncate" style="max-width: 140px;" title="{{ tx.note }}">
-                          <i class="bi bi-chat-left-text me-1"></i>{{ tx.note }}
-                        </div>
-                      {% endif %}
-                    </td>
+                    <td class="text-nowrap fw-bold">{{ tx.date }}</td>
 
-                    <!-- Type Badge -->
+                    <!-- Type -->
                     <td>
                       {% if tx.type == 'Income' %}
-                        <span class="badge-income">
-                          <i class="bi bi-arrow-up-right"></i> Income
-                        </span>
+                        <span class="table-badge badge-income">Income</span>
                       {% else %}
-                        <span class="badge-expense">
-                          <i class="bi bi-arrow-down-right"></i> Expense
-                        </span>
+                        <span class="table-badge badge-expense">Expense</span>
                       {% endif %}
                     </td>
 
                     <!-- Category -->
                     <td>
-                      <span class="cat-badge">
-                        <i class="bi bi-tag-fill text-muted" style="font-size: 0.75rem;"></i>
-                        {{ tx.category }}
-                      </span>
+                      <span class="table-cat-tag">{{ tx.category }}</span>
+                    </td>
+
+                    <!-- Description / Note -->
+                    <td>
+                      {% if tx.note %}
+                        <span class="table-note-text" title="{{ tx.note }}">{{ tx.note }}</span>
+                      {% else %}
+                        <span class="text-muted small">—</span>
+                      {% endif %}
                     </td>
 
                     <!-- Amount -->
                     <td class="text-end text-nowrap">
                       {% if tx.type == 'Income' %}
-                        <span class="amount-income">+{{ tx.amount | format_currency }}</span>
+                        <span class="table-amount-income">+{{ tx.amount | format_currency }}</span>
                       {% else %}
-                        <span class="amount-expense">-{{ tx.amount | format_currency }}</span>
+                        <span class="table-amount-expense">-{{ tx.amount | format_currency }}</span>
                       {% endif %}
                     </td>
 
-                    <!-- Actions -->
+                    <!-- Delete action -->
                     <td class="text-center">
                       <button type="button" 
-                              class="btn-delete-action" 
+                              class="btn-doodle-delete" 
                               data-bs-toggle="modal" 
                               data-bs-target="#deleteConfirmModal"
                               data-tx-id="{{ tx.id }}"
                               data-tx-desc="{{ tx.type }} of {{ tx.amount | format_currency }} ({{ tx.category }})"
-                              title="Delete Transaction">
-                        <i class="bi bi-trash3"></i>
+                              title="Delete Entry">
+                        🗑️
                       </button>
                     </td>
                   </tr>
@@ -312,19 +409,21 @@
             </table>
           </div>
         {% else %}
-          <!-- Empty State -->
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <i class="bi bi-receipt-cutoff"></i>
-            </div>
-            <h6 class="fw-bold text-dark mb-1">No Transactions Found</h6>
+          <!-- Empty State Doodle -->
+          <div class="doodle-empty-state">
+            <div class="empty-state-art">📝</div>
+            <h5 class="fw-bold mb-1" style="font-family: 'Fredoka', cursive;">No entries found yet!</h5>
             {% if search_query or filter_type %}
-              <p class="text-muted small mb-3">No records match your active filters.</p>
-              <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
+              <p class="text-muted mb-3" style="font-family: 'Patrick Hand', cursive; font-size: 1.15rem;">
+                No records match your active search or filter.
+              </p>
+              <a href="{{ url_for('index') }}" class="btn-doodle-secondary">Clear Filters</a>
             {% else %}
-              <p class="text-muted small mb-3">Your transaction list is empty. Add your first income or expense to get started!</p>
-              <a href="#addTransactionSection" class="btn btn-sm btn-primary-gradient">
-                <i class="bi bi-plus-lg me-1"></i> Add Transaction
+              <p class="text-muted mb-3" style="font-family: 'Patrick Hand', cursive; font-size: 1.15rem;">
+                Your log is squeaky clean! Fill out the HTML Tracker on the left to add your first daily entry.
+              </p>
+              <a href="#addTransactionSection" class="btn-doodle-primary">
+                <span>Start Logging ♡</span>
               </a>
             {% endif %}
           </div>
@@ -337,21 +436,21 @@
 </div>
 
 <!-- ========================================================
-     DELETE CONFIRMATION MODAL
+     DELETE CONFIRMATION MODAL (Cute hand-drawn modal)
      ======================================================== -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-sm">
-    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+    <div class="modal-content doodle-modal-box">
       <div class="modal-body text-center p-4">
-        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 50%; background: #fee2e2; color: #ef4444; font-size: 1.5rem;">
-          <i class="bi bi-trash3-fill"></i>
-        </div>
-        <h6 class="fw-bold mb-2">Delete Transaction?</h6>
-        <p class="text-muted small mb-4">Are you sure you want to remove <span id="deleteModalDesc" class="fw-semibold text-dark"></span>? This action cannot be undone.</p>
+        <div class="modal-doodle-icon mb-2">🗑️</div>
+        <h5 class="fw-bold mb-2" style="font-family: 'Fredoka', cursive;">Remove Entry?</h5>
+        <p class="text-muted small mb-4" style="font-family: 'Patrick Hand', cursive; font-size: 1.1rem;">
+          Are you sure you want to delete <span id="deleteModalDesc" class="fw-bold text-dark"></span>?
+        </p>
         <form id="deleteForm" method="POST" action="">
           <div class="d-flex gap-2">
-            <button type="button" class="btn btn-light w-50 fw-semibold" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-danger w-50 fw-semibold">Delete</button>
+            <button type="button" class="btn-doodle-secondary w-50" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn-doodle-delete-confirm w-50">Yes, Delete</button>
           </div>
         </form>
       </div>

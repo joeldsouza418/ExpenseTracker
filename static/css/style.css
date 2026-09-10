@@ -1,439 +1,975 @@
 /* ==========================================================================
-   Expense Tracker - Modern Custom Styles
+   FinTrack — Cozy Stationery & Hand-Drawn Poster Theme
+   Inspired by "TRACK MONEY WITHOUT A COMPLICATED APP"
    ========================================================================== */
 
 :root {
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #eef2ff;
-  --success: #10b981;
-  --success-bg: #ecfdf5;
-  --danger: #ef4444;
-  --danger-bg: #fef2f2;
-  --info: #06b6d4;
-  --info-bg: #ecfeff;
-  --dark: #0f172a;
-  --slate-50: #f8fafc;
-  --slate-100: #f1f5f9;
-  --slate-200: #e2e8f0;
-  --slate-300: #cbd5e1;
-  --slate-500: #64748b;
-  --slate-700: #334155;
-  --slate-800: #1e293b;
-  --card-radius: 18px;
-  --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-  --card-shadow-hover: 0 20px 30px -10px rgba(15, 23, 42, 0.08), 0 10px 15px -5px rgba(15, 23, 42, 0.04);
+  /* Warm Paper & Ink Palette */
+  --paper-bg: #faf7f0;
+  --paper-card: #ffffff;
+  --paper-cream: #fdfbf7;
+  --ink-color: #2b2d42;
+  --ink-light: #52566b;
+  --ink-border: 2px solid #2b2d42;
+  --ink-border-thin: 1.5px solid #2b2d42;
+  --doodle-shadow: 4px 4px 0px #2b2d42;
+  --doodle-shadow-sm: 2.5px 2.5px 0px #2b2d42;
+  --doodle-shadow-hover: 5px 5px 0px #2b2d42;
+
+  /* Pastel Theme Colors */
+  --pastel-purple: #ebe7f7;
+  --purple-dark: #6750a4;
+  --pastel-peach: #faebd7;
+  --peach-dark: #c8613d;
+  --pastel-green: #e2f0d9;
+  --green-dark: #3a734e;
+  --pastel-rose: #fce4ec;
+  --rose-dark: #b82d60;
+  --pastel-blue: #e1f5fe;
+  --blue-dark: #1976d2;
+  --pastel-yellow: #fff9db;
+  --tracker-header-bg: #2e6955;
+
+  /* Typography */
+  --font-title: 'Fredoka', cursive, sans-serif;
+  --font-hand: 'Patrick Hand', 'Gaegu', cursive;
+  --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+/* ==========================================================================
+   Base & Background Setup
+   ========================================================================== */
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #f4f6fb;
-  color: var(--slate-800);
+  background-color: var(--paper-bg);
+  background-image: radial-gradient(rgba(43, 45, 66, 0.04) 1px, transparent 0);
+  background-size: 20px 20px;
+  color: var(--ink-color);
+  font-family: var(--font-body);
   min-height: 100vh;
-  letter-spacing: -0.01em;
-}
-
-/* Navbar */
-.navbar-custom {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-.brand-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.35);
-}
-
-/* Glass & Card Styling */
-.app-card {
-  background: #ffffff;
-  border-radius: var(--card-radius);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: var(--card-shadow);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.app-card:hover {
-  box-shadow: var(--card-shadow-hover);
-}
-
-/* Summary Metric Cards */
-.stat-card {
   position: relative;
-  overflow: hidden;
-  border-radius: var(--card-radius);
-  padding: 1.5rem;
-  background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: var(--card-shadow);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
 }
 
-.stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--card-shadow-hover);
+/* Background floating sparkles */
+.doodle-sparkle {
+  position: absolute;
+  color: #df9b58;
+  font-size: 1.6rem;
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.65;
+}
+.sparkle-tl { top: 30px; left: 40px; }
+.sparkle-tr { top: 35px; right: 50px; }
+.sparkle-ml { top: 45%; left: 20px; }
+.sparkle-mr { top: 48%; right: 25px; }
+
+/* ==========================================================================
+   Hand-Drawn Poster Header
+   ========================================================================== */
+
+.poster-header {
+  position: relative;
 }
 
-.stat-card::before {
+.title-wrap {
+  max-width: 680px;
+}
+
+.main-title {
+  font-family: var(--font-title);
+  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-color);
+  margin-bottom: 0.2rem;
+  line-height: 1.1;
+  text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.9);
+}
+
+/* Subtitle Pill: WITHOUT A COMPLICATED APP */
+.subtitle-banner {
+  display: inline-block;
+  background-color: #d9d2f6;
+  border: var(--ink-border);
+  border-radius: 30px;
+  padding: 0.35rem 1.6rem;
+  box-shadow: var(--doodle-shadow-sm);
+  margin-top: 0.2rem;
+}
+
+.subtitle-banner span {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: clamp(1rem, 2.8vw, 1.45rem);
+  letter-spacing: 0.06em;
+  color: var(--ink-color);
+}
+
+/* Ribbon: Personal Money Snapshot */
+.ribbon-container {
+  display: flex;
+  justify-content: center;
+}
+
+.cute-ribbon {
+  position: relative;
+  display: inline-block;
+  background-color: #b8dfc8;
+  border: var(--ink-border);
+  padding: 0.45rem 2.8rem;
+  box-shadow: var(--doodle-shadow-sm);
+}
+
+/* Ribbon Fishtail Notch (Left & Right) */
+.cute-ribbon::before,
+.cute-ribbon::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
+  top: 5px;
+  width: 20px;
+  height: calc(100% - 10px);
+  background-color: inherit;
+  border: inherit;
+  z-index: -1;
 }
 
-.stat-income::before {
-  background: linear-gradient(90deg, #10b981, #34d399);
+.cute-ribbon::before {
+  left: -14px;
+  border-right: none;
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
 }
 
-.stat-expense::before {
-  background: linear-gradient(90deg, #ef4444, #f87171);
+.cute-ribbon::after {
+  right: -14px;
+  border-left: none;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
 
-.stat-balance::before {
-  background: linear-gradient(90deg, #4f46e5, #818cf8);
+.ribbon-text {
+  font-family: var(--font-hand);
+  font-size: clamp(1.4rem, 3.2vw, 2rem);
+  font-weight: 700;
+  color: var(--ink-color);
+  letter-spacing: 0.02em;
 }
 
-.stat-icon {
+/* Subtext & Heart Flourish */
+.hand-doodle-heart {
+  font-family: var(--font-hand);
+  font-size: 1.6rem;
+  color: #df6d84;
+  margin: 0.1rem 0;
+}
+
+.header-instruction {
+  font-family: var(--font-hand);
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  color: var(--ink-light);
+  line-height: 1.4;
+}
+
+/* Header Doodles (Notepad & Plant) */
+.header-doodle-notepad {
+  position: absolute;
+  left: 2%;
+  top: 15px;
+  width: 120px;
+  background: #fffdf5;
+  border: var(--ink-border);
+  border-radius: 12px;
+  box-shadow: var(--doodle-shadow-sm);
+  padding: 10px;
+  transform: rotate(-5deg);
+  z-index: 2;
+}
+
+.notepad-pin {
+  width: 14px;
+  height: 14px;
+  background: #ef4444;
+  border: 1.5px solid var(--ink-color);
+  border-radius: 50%;
+  margin: -16px auto 6px;
+  box-shadow: 1px 1px 0px #000;
+}
+
+.notepad-line {
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 2px;
+}
+
+.notepad-line .check-mark {
+  color: #388e3c;
+  font-weight: bold;
+}
+
+.notepad-heart {
+  color: #ef4444;
+  font-family: var(--font-hand);
+  text-align: right;
+  font-size: 1.2rem;
+  margin-top: -4px;
+}
+
+.header-doodle-plant {
+  position: absolute;
+  right: 2%;
+  top: 20px;
+  text-align: center;
+  transform: rotate(6deg);
+  z-index: 2;
+}
+
+.plant-leaves {
+  font-size: 3.5rem;
+  filter: drop-shadow(2px 3px 0px rgba(0, 0, 0, 0.12));
+}
+
+.plant-sparkle {
+  font-size: 1.2rem;
+  margin-top: -10px;
+}
+
+/* Quick Action Bar */
+.header-date-pill {
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  background: #ffffff;
+  border: var(--ink-border-thin);
+  border-radius: 20px;
+  padding: 0.25rem 0.9rem;
+  box-shadow: 2px 2px 0px #2b2d42;
+}
+
+.btn-cute-jump {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: #2e6955;
+  color: #ffffff;
+  border: var(--ink-border-thin);
+  border-radius: 20px;
+  padding: 0.35rem 1rem;
+  box-shadow: 2px 2px 0px #2b2d42;
+  transition: all 0.15s ease;
+}
+
+.btn-cute-jump:hover {
+  background: #245343;
+  color: #ffffff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #2b2d42;
+}
+
+/* ==========================================================================
+   The 4 Feature / Stat Cards
+   ========================================================================== */
+
+.doodle-card {
+  background-color: var(--paper-card);
+  border: var(--ink-border);
+  border-radius: 16px;
+  box-shadow: var(--doodle-shadow);
+  padding: 1.25rem;
+  height: 100%;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.doodle-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--doodle-shadow-hover);
+}
+
+.card-income-theme { background-color: #faf8ff; }
+.card-expense-theme { background-color: #fffaf5; }
+.card-cashflow-theme { background-color: #f7fbf7; }
+.card-review-theme { background-color: #fff7fa; }
+
+/* Numbered Pill Badges */
+.doodle-pill {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  border: var(--ink-border-thin);
+  display: inline-block;
+}
+
+.pill-purple { background-color: #dcd6f7; color: var(--purple-dark); }
+.pill-peach { background-color: #fde8d7; color: var(--peach-dark); }
+.pill-green { background-color: #d7edd2; color: var(--green-dark); }
+.pill-rose { background-color: #fed9e2; color: var(--rose-dark); }
+
+/* Circular Checkmark */
+.doodle-check {
+  width: 26px;
+  height: 26px;
+  border: var(--ink-border-thin);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.check-purple { background-color: #ebe7f7; color: var(--purple-dark); }
+.check-peach { background-color: #fde8d7; color: var(--peach-dark); }
+.check-green { background-color: #d7edd2; color: var(--green-dark); }
+.check-rose { background-color: #fed9e2; color: var(--rose-dark); }
+
+/* Icon Boxes */
+.doodle-icon-box {
   width: 52px;
   height: 52px;
+  border: var(--ink-border-thin);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  box-shadow: 2px 2px 0px #2b2d42;
 }
 
-.stat-icon-income {
-  background-color: var(--success-bg);
-  color: var(--success);
+.bg-purple-tint { background-color: #ede7f6; }
+.bg-peach-tint { background-color: #fef0e6; }
+.bg-green-tint { background-color: #e5f3e2; }
+.bg-rose-tint { background-color: #fce4ec; }
+
+/* Metrics */
+.doodle-metric-label {
+  font-family: var(--font-hand);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink-light);
+  line-height: 1;
 }
 
-.stat-icon-expense {
-  background-color: var(--danger-bg);
-  color: var(--danger);
-}
-
-.stat-icon-balance {
-  background-color: var(--primary-light);
-  color: var(--primary);
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--slate-500);
-}
-
-.stat-value {
-  font-size: 1.95rem;
-  font-weight: 800;
-  color: var(--dark);
+.doodle-metric-value {
+  font-family: var(--font-title);
+  font-size: 1.55rem;
+  font-weight: 700;
   line-height: 1.2;
 }
 
-/* Custom Segmented Buttons for Income/Expense Type Selector */
-.type-selector-group {
+.text-purple-dark { color: var(--purple-dark); }
+.text-peach-dark { color: var(--peach-dark); }
+.text-green-dark { color: var(--green-dark); }
+.text-rose-dark { color: var(--rose-dark); }
+
+/* Bullet list */
+.doodle-bullet-list {
+  list-style: none;
+  padding-left: 0;
+  border-top: 1px dashed rgba(43, 45, 66, 0.2);
+  padding-top: 0.65rem;
+}
+
+.doodle-bullet-list li {
+  font-family: var(--font-hand);
+  font-size: 1.08rem;
+  color: var(--ink-light);
+  position: relative;
+  padding-left: 1.1rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.doodle-bullet-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--ink-color);
+  font-size: 1.3rem;
+  line-height: 0.9;
+}
+
+/* ==========================================================================
+   HTML TRACKER (The Add Transaction Form)
+   ========================================================================== */
+
+.doodle-section-title {
+  font-family: var(--font-title);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--ink-color);
+}
+
+.doodle-section-subtitle {
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  margin-bottom: 0.4rem;
+}
+
+.tracker-card {
+  background: #ffffff;
+  border: var(--ink-border);
+  border-radius: 16px;
+  box-shadow: var(--doodle-shadow);
+  overflow: hidden;
+}
+
+.tracker-card-header {
+  background-color: var(--tracker-header-bg);
+  color: #ffffff;
+  padding: 0.65rem 1.2rem;
+  border-bottom: var(--ink-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tracker-header-title {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.tracker-header-sparkle {
+  color: #ffd166;
+  font-size: 1.1rem;
+}
+
+/* Form Controls */
+.doodle-label {
+  font-family: var(--font-title);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-color);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.doodle-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.doodle-input-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.doodle-input {
+  width: 100%;
+  background: #fffdfa;
+  border: var(--ink-border-thin);
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem 0.6rem 2.6rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink-color);
+  box-shadow: 2px 2px 0px rgba(43, 45, 66, 0.15);
+  transition: all 0.15s ease;
+}
+
+.doodle-input:focus {
+  outline: none;
+  border-color: #2b2d42;
+  box-shadow: 3px 3px 0px #2b2d42;
+  background: #ffffff;
+}
+
+.doodle-invalid {
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  font-weight: bold;
+}
+
+/* Income / Expense Toggle */
+.doodle-type-toggle {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
-  background: var(--slate-100);
+  background: #f1ede3;
   padding: 0.35rem;
+  border: var(--ink-border-thin);
   border-radius: 12px;
 }
 
-.type-btn {
+.doodle-type-btn {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: 9px;
-  border: none;
-  background: transparent;
-  color: var(--slate-500);
+  gap: 0.4rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
-.type-btn:hover {
-  color: var(--slate-700);
-}
-
-.type-btn.active.type-income {
+.doodle-type-btn.active.type-income,
+.doodle-type-btn.active#typeIncomeBtn {
   background: #ffffff;
-  color: #059669;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+  color: var(--green-dark);
+  border: var(--ink-border-thin);
+  box-shadow: 2px 2px 0px #2b2d42;
 }
 
-.type-btn.active.type-expense {
+.doodle-type-btn.active.type-expense,
+.doodle-type-btn.active#typeExpenseBtn {
   background: #ffffff;
-  color: #dc2626;
-  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
+  color: var(--peach-dark);
+  border: var(--ink-border-thin);
+  box-shadow: 2px 2px 0px #2b2d42;
 }
 
-/* Quick Category Pill Tags */
+/* Category Preset Stickers/Pills */
 .category-pills-wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
 }
 
 .cat-pill {
-  font-size: 0.775rem;
-  font-weight: 500;
-  padding: 0.35rem 0.75rem;
-  border-radius: 20px;
-  background: var(--slate-100);
-  color: var(--slate-700);
-  border: 1px solid var(--slate-200);
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  background: #fdfbf7;
+  border: var(--ink-border-thin);
+  border-radius: 15px;
+  color: var(--ink-color);
+  box-shadow: 1.5px 1.5px 0px #2b2d42;
   cursor: pointer;
-  transition: all 0.15s ease;
   user-select: none;
+  transition: all 0.12s ease;
 }
 
 .cat-pill:hover {
-  background: var(--slate-200);
-  border-color: var(--slate-300);
+  background: #fcefdc;
   transform: translateY(-1px);
+  box-shadow: 2.5px 2.5px 0px #2b2d42;
 }
 
 .cat-pill.selected {
-  background: var(--primary-light);
-  color: var(--primary);
-  border-color: var(--primary);
-  font-weight: 600;
+  background: #b8dfc8;
+  border-color: #2b2d42;
+  box-shadow: 2px 2px 0px #2b2d42;
+  transform: translate(1px, 1px);
 }
 
-/* Custom Form Controls */
-.form-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--slate-700);
-  margin-bottom: 0.35rem;
+.cat-pill-expense {
+  background: #fef0e6;
 }
 
-.form-control, .form-select {
-  border-radius: 10px;
-  border: 1.5px solid var(--slate-200);
-  padding: 0.65rem 0.95rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--slate-800);
-  background-color: #fff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
-  outline: none;
-}
-
-.input-group-text {
-  background-color: var(--slate-50);
-  border: 1.5px solid var(--slate-200);
-  border-radius: 10px 0 0 10px;
-  color: var(--slate-500);
-  font-weight: 600;
-}
-
-.input-group .form-control {
-  border-radius: 0 10px 10px 0;
-}
-
-/* Submit Button */
-.btn-primary-gradient {
-  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-  border: none;
-  color: white;
-  font-weight: 600;
-  padding: 0.75rem 1.25rem;
+/* Buttons */
+.btn-doodle-primary {
+  background-color: var(--tracker-header-bg);
+  border: var(--ink-border);
   border-radius: 12px;
-  box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.35);
-  transition: all 0.2s ease;
-}
-
-.btn-primary-gradient:hover {
-  background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
-  box-shadow: 0 10px 24px -4px rgba(79, 70, 229, 0.45);
-  transform: translateY(-1px);
-  color: #fff;
-}
-
-/* Transactions Table */
-.custom-table-container {
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--slate-200);
-}
-
-.table-custom {
-  margin-bottom: 0;
-}
-
-.table-custom thead th {
-  background-color: var(--slate-50);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--slate-500);
-  padding: 0.9rem 1.1rem;
-  border-bottom: 1px solid var(--slate-200);
-}
-
-.table-custom tbody tr {
-  transition: background-color 0.15s ease;
-}
-
-.table-custom tbody tr:hover {
-  background-color: rgba(241, 245, 249, 0.6);
-}
-
-.table-custom tbody td {
-  padding: 1rem 1.1rem;
-  vertical-align: middle;
-  border-bottom: 1px solid var(--slate-200);
-  font-size: 0.925rem;
-}
-
-/* Badges */
-.badge-income {
-  background-color: #ecfdf5;
-  color: #059669;
-  border: 1px solid #a7f3d0;
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-size: 1.05rem;
   font-weight: 600;
-  font-size: 0.75rem;
-  padding: 0.4em 0.75em;
-  border-radius: 30px;
+  padding: 0.65rem 1.25rem;
+  box-shadow: var(--doodle-shadow-sm);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  justify-content: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  transition: all 0.12s ease;
 }
 
-.badge-expense {
-  background-color: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+.btn-doodle-primary:hover {
+  background-color: #245343;
+  color: #ffffff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3.5px 3.5px 0px #2b2d42;
+}
+
+.btn-doodle-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #2b2d42;
+}
+
+.btn-doodle-secondary {
+  background-color: #fff9ee;
+  border: var(--ink-border);
+  border-radius: 12px;
+  color: var(--ink-color);
+  font-family: var(--font-title);
+  font-size: 0.95rem;
   font-weight: 600;
-  font-size: 0.75rem;
-  padding: 0.4em 0.75em;
-  border-radius: 30px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
+  padding: 0.65rem 1rem;
+  box-shadow: var(--doodle-shadow-sm);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.12s ease;
 }
 
-.amount-income {
-  color: #059669;
-  font-weight: 700;
+.btn-doodle-secondary:hover {
+  background-color: #f7ecd7;
+  color: var(--ink-color);
+  transform: translate(-1px, -1px);
 }
 
-.amount-expense {
-  color: #dc2626;
-  font-weight: 700;
+.btn-doodle-secondary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #2b2d42;
 }
 
-/* Category Badge Item */
-.cat-badge {
-  background-color: var(--slate-100);
-  color: var(--slate-700);
-  font-weight: 600;
-  font-size: 0.825rem;
-  padding: 0.35rem 0.65rem;
+.tracker-tag-row {
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+}
+
+/* Spending Ratio Progress Bar */
+.doodle-progress-bar {
+  display: flex;
+  height: 14px;
+  background: #f1ede3;
+  border: var(--ink-border-thin);
   border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  overflow: hidden;
+  box-shadow: 1.5px 1.5px 0px #2b2d42;
 }
 
-/* Filter Nav Pills */
-.filter-pill {
+.progress-segment.segment-income {
+  background-color: #a8d5ba;
+  border-right: 1.5px solid #2b2d42;
+}
+
+.progress-segment.segment-expense {
+  background-color: #f8b4a0;
+}
+
+/* ==========================================================================
+   TRANSACTION LOG DASHBOARD & NOTEBOOK TABLE
+   ========================================================================== */
+
+/* Top 3 Mini Stat Boxes */
+.mini-stat-box {
+  border: var(--ink-border-thin);
+  border-radius: 10px;
+  padding: 0.5rem 0.25rem;
+  box-shadow: 2px 2px 0px #2b2d42;
+}
+
+.box-income { background-color: #eaf6ea; }
+.box-expense { background-color: #fff0e8; }
+.box-balance { background-color: #f2eefd; }
+
+.mini-stat-label {
+  font-family: var(--font-hand);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink-light);
+  line-height: 1.1;
+}
+
+.mini-stat-val {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Filter Tabs */
+.doodle-filter-tab {
+  font-family: var(--font-title);
   font-size: 0.85rem;
   font-weight: 600;
-  padding: 0.4rem 0.9rem;
-  border-radius: 20px;
-  color: var(--slate-500);
   text-decoration: none;
-  background: var(--slate-100);
-  transition: all 0.15s ease;
+  color: var(--ink-color);
+  background: #f1ede3;
+  border: var(--ink-border-thin);
+  border-radius: 16px;
+  padding: 0.3rem 0.85rem;
+  box-shadow: 1.5px 1.5px 0px #2b2d42;
+  transition: all 0.12s ease;
 }
 
-.filter-pill:hover {
-  background: var(--slate-200);
-  color: var(--slate-700);
+.doodle-filter-tab:hover {
+  background: #e4decb;
+  color: var(--ink-color);
+  transform: translateY(-1px);
 }
 
-.filter-pill.active {
-  background: var(--dark);
+.doodle-filter-tab.active {
+  background: #2b2d42;
   color: #ffffff;
 }
 
-/* Action Buttons */
-.btn-delete-action {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border-radius: 8px;
-  display: inline-flex;
+/* Search Box */
+.doodle-search-wrap {
+  position: relative;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--slate-400);
+}
+
+.doodle-search-input {
+  border: var(--ink-border-thin);
+  border-radius: 10px;
+  padding: 0.35rem 1.6rem 0.35rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #fffdfa;
+  width: 145px;
+  box-shadow: 1.5px 1.5px 0px #2b2d42;
+}
+
+.doodle-search-input:focus {
+  outline: none;
+  width: 175px;
+  background: #fff;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 6px;
+  text-decoration: none;
+  color: var(--ink-light);
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.btn-doodle-search {
+  background: #e2f0d9;
+  border: var(--ink-border-thin);
+  border-radius: 10px;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  box-shadow: 1.5px 1.5px 0px #2b2d42;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.btn-doodle-search:hover {
+  background: #cbe6d4;
+  transform: translateY(-1px);
+}
+
+/* Notebook Table */
+.doodle-table-responsive {
+  border: var(--ink-border);
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 2px 2px 0px #2b2d42;
+}
+
+.doodle-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+.doodle-table thead th {
+  background-color: #e5ede3;
+  border-bottom: var(--ink-border);
+  border-right: 1px dashed rgba(43, 45, 66, 0.2);
+  color: var(--ink-color);
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.7rem 0.85rem;
+  text-align: left;
+}
+
+.doodle-table thead th:last-child {
+  border-right: none;
+}
+
+.doodle-table tbody tr {
+  border-bottom: 1px solid rgba(43, 45, 66, 0.15);
+  transition: background-color 0.12s ease;
+}
+
+.doodle-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.doodle-table tbody tr:hover {
+  background-color: #fff9ea !important;
+}
+
+.doodle-table tbody td {
+  padding: 0.75rem 0.85rem;
+  font-size: 0.92rem;
+  vertical-align: middle;
+  border-right: 1px dashed rgba(43, 45, 66, 0.12);
+}
+
+.doodle-table tbody td:last-child {
+  border-right: none;
+}
+
+.row-income { background-color: #fafdf9; }
+.row-expense { background-color: #fffcf8; }
+
+/* Table Badges */
+.table-badge {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  border: var(--ink-border-thin);
+  display: inline-block;
+}
+
+.badge-income { background-color: #d7edd2; color: var(--green-dark); }
+.badge-expense { background-color: #fde8d7; color: var(--peach-dark); }
+
+.table-cat-tag {
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink-color);
+}
+
+.table-note-text {
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  color: var(--ink-light);
+  display: inline-block;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-amount-income {
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--green-dark);
+  font-size: 1rem;
+}
+
+.table-amount-expense {
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--peach-dark);
+  font-size: 1rem;
+}
+
+/* Delete Button */
+.btn-doodle-delete {
   background: transparent;
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  padding: 0.2rem 0.4rem;
+  font-size: 1rem;
+  cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.btn-delete-action:hover {
-  color: var(--danger);
-  background: var(--danger-bg);
-  border-color: #fecaca;
+.btn-doodle-delete:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+  transform: scale(1.15);
 }
 
 /* Empty State */
-.empty-state {
-  padding: 3.5rem 1.5rem;
+.doodle-empty-state {
   text-align: center;
+  padding: 2.5rem 1rem;
 }
 
-.empty-state-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 20px;
-  background: var(--slate-100);
-  color: var(--slate-400);
-  display: flex;
+.empty-state-art {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Modal */
+.doodle-modal-box {
+  background: #ffffff;
+  border: var(--ink-border);
+  border-radius: 18px;
+  box-shadow: 6px 6px 0px #2b2d42;
+}
+
+.modal-doodle-icon {
+  font-size: 2.5rem;
+}
+
+.btn-doodle-delete-confirm {
+  background-color: #ef4444;
+  border: var(--ink-border);
+  border-radius: 12px;
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.65rem 1rem;
+  box-shadow: var(--doodle-shadow-sm);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.btn-doodle-delete-confirm:hover {
+  background-color: #dc2626;
+  color: #fff;
+}
+
+/* Alert Banner */
+.alert-hand-drawn {
+  background-color: #fffdfa;
+  border: var(--ink-border);
+  border-radius: 14px;
+  box-shadow: var(--doodle-shadow-sm);
+  color: var(--ink-color);
+  font-family: var(--font-body);
+}
+
+.alert-icon-wrap {
+  width: 26px;
+  height: 26px;
+  border: var(--ink-border-thin);
+  border-radius: 50%;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  margin: 0 auto 1.25rem;
+  font-weight: bold;
+  font-size: 0.85rem;
 }
 
-/* Category Breakdown Bars */
-.progress-thin {
-  height: 6px;
-  border-radius: 3px;
-  background-color: var(--slate-100);
+/* Poster Footer */
+.poster-footer {
+  border-top: 2px dashed rgba(43, 45, 66, 0.2);
+  background: rgba(255, 255, 255, 0.3);
 }
 
-/* Alert Styling */
-.alert-custom {
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.footer-doodle-divider {
+  font-family: var(--font-hand);
+  font-size: 1.8rem;
+  color: #df6d84;
+}
+
+.footer-badge-item {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+}
+
+.text-ink-muted {
+  color: var(--ink-light);
 }

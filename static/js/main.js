@@ -149,6 +149,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Clear button reset enhancement
+  const clearBtn = document.getElementById('clearBtn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      setTimeout(() => {
+        setTransactionType('Expense');
+        if (dateInput) {
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const mm = String(today.getMonth() + 1).padStart(2, '0');
+          const dd = String(today.getDate()).padStart(2, '0');
+          dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('selected'));
+        categoryInput?.classList.remove('is-invalid');
+        document.getElementById('amountInput')?.classList.remove('is-invalid');
+        dateInput?.classList.remove('is-invalid');
+      }, 50);
+    });
+  }
+
   // Delete modal setup
   const deleteModal = document.getElementById('deleteConfirmModal');
   if (deleteModal) {
@@ -164,3 +185,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
