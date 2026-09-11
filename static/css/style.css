@@ -1303,25 +1303,11 @@ body {
   transform: scale(1.15);
 }
 
-/* ==========================================================================
-   Redesigned Hand-Drawn Footer
-   ========================================================================== */
+/* Simple Hand-Drawn Footer */
 .doodle-footer {
-  border-top: var(--ink-border-thin);
-  background: rgba(250, 247, 240, 0.7);
+  border-top: none;
+  background: transparent;
   position: relative;
-}
-
-.footer-card-box {
-  background: var(--paper-card);
-  border: var(--ink-border-thin);
-  box-shadow: var(--doodle-shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.footer-card-box:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--doodle-shadow);
 }
 
 .footer-credit-text {
@@ -1339,6 +1325,8 @@ body {
   border-radius: 20px;
   padding: 0.3rem 0.95rem;
   box-shadow: 2px 2px 0px #2b2d42;
+  cursor: pointer;
+  text-decoration: none !important;
   transition: all 0.2s ease;
 }
 
@@ -1359,5 +1347,58 @@ body {
   font-family: var(--font-hand);
   font-size: 1.15rem;
   color: var(--ink-light);
+}
+
+/* ==========================================================================
+   User Authentication & Profile Navigation Badges
+   ========================================================================== */
+.user-profile-badge {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--purple-dark);
+  background: #ebe7f7;
+  border: var(--ink-border-thin);
+  border-radius: 20px;
+  padding: 0.35rem 0.85rem;
+  box-shadow: 2px 2px 0px #2b2d42;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.nav-auth-btn {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 16px;
+  padding: 0.35rem 0.8rem;
+  border: var(--ink-border-thin);
+  box-shadow: 1.5px 1.5px 0px #2b2d42;
+  transition: all 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-auth-login {
+  background: #fff9ee;
+  color: var(--ink-color);
+}
+
+.nav-auth-register {
+  background: var(--tracker-header-bg);
+  color: #ffffff;
+}
+
+.nav-auth-logout {
+  background: #fce4ec;
+  color: var(--rose-dark);
+}
+
+.nav-auth-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 2.5px 2.5px 0px #2b2d42;
 }
 

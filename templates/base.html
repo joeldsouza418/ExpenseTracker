@@ -59,6 +59,25 @@
           <a href="{{ url_for('summary') }}" class="nav-page-btn {% if active_tab == 'summary' %}active{% endif %}">
             <span>Spending Summary</span>
           </a>
+
+          <!-- User Account Status & Auth Buttons -->
+          <div class="d-flex align-items-center justify-content-center gap-2 pt-2 pt-md-0 ms-md-2 border-top border-md-0 border-ink-light">
+            {% if current_user.is_guest %}
+              <a href="{{ url_for('login') }}" class="nav-auth-btn nav-auth-login">
+                <span>Sign In</span>
+              </a>
+              <a href="{{ url_for('register') }}" class="nav-auth-btn nav-auth-register">
+                <span>Register</span>
+              </a>
+            {% else %}
+              <span class="user-profile-badge" title="Logged in as {{ current_user.username }}">
+                <span class="user-icon">👤</span> {{ current_user.username }}
+              </span>
+              <a href="{{ url_for('logout') }}" class="nav-auth-btn nav-auth-logout" title="Sign Out">
+                <span>Logout</span>
+              </a>
+            {% endif %}
+          </div>
         </div>
       </div>
 
@@ -97,19 +116,14 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Redesigned Hand-Drawn Poster Footer -->
-  <footer class="doodle-footer py-4 mt-5">
+  <!-- Simple Footer without card or border line -->
+  <footer class="doodle-footer py-4 mt-4">
     <div class="container-fluid px-3 px-md-5 text-center">
-      <div class="d-inline-flex flex-column align-items-center gap-2 p-3 p-md-4 rounded-4 footer-card-box">
-        <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
-          <span class="footer-credit-text">Designed &amp; Developed by</span>
-          <span class="footer-author-pill">
-            <span class="author-handle">joel.dsouza11</span>
-          </span>
-        </div>
-        <p class="small mb-0 footer-tech-stack">
-          Built with Flask &bull; SQLite &bull; Bootstrap 5
-        </p>
+      <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+        <span class="footer-credit-text">Designed &amp; Developed by</span>
+        <a href="https://www.linkedin.com/in/joel-dsouza-30872124b?utm_source=share_via&amp;utm_content=profile&amp;utm_medium=member_android" target="_blank" rel="noopener noreferrer" class="footer-author-pill text-decoration-none">
+          <span class="author-handle">joel.dsouza11</span>
+        </a>
       </div>
     </div>
   </footer>

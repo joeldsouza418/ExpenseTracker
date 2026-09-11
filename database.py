@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "expense_tracker.db")
 
@@ -13,40 +14,133 @@ def get_db_connection(db_path=None):
 
 
 def init_db(db_path=None):
-    """Initializes the database schema."""
+    """Initializes the database schema with user authentication & multi-tenant user_id support."""
     conn = get_db_connection(db_path)
     cursor = conn.cursor()
+
+    # 1. Create Users table
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """
+    )
+
+    # 2. Create Transactions table
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL DEFAULT 1,
             type TEXT NOT NULL CHECK(type IN ('Income', 'Expense')),
             category TEXT NOT NULL,
             amount REAL NOT NULL CHECK(amount > 0),
             date TEXT NOT NULL,
             note TEXT DEFAULT '',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         );
         """
     )
+
+    # Check if user_id column exists in existing transactions table (migration check)
+    cursor.execute("PRAGMA table_info(transactions);")
+    columns = [col[1] for col in cursor.fetchall()]
+    if "user_id" not in columns:
+        cursor.execute("ALTER TABLE transactions ADD COLUMN user_id INTEGER NOT NULL DEFAULT 1;")
+
+    # Ensure default Guest user (id=1) exists
+    cursor.execute("SELECT COUNT(*) FROM users WHERE id = 1;")
+    if cursor.fetchone()[0] == 0:
+        guest_hash = generate_password_hash("guest123")
+        cursor.execute(
+            "INSERT INTO users (id, username, password_hash) VALUES (1, 'Guest', ?)",
+            (guest_hash,)
+        )
+
     # Create indexes for performance
-    cursor.execute(
-        "CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date);"
-    )
-    cursor.execute(
-        "CREATE INDEX IF NOT EXISTS idx_transactions_type ON transactions(type);"
-    )
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_type ON transactions(type);")
+
     conn.commit()
     conn.close()
 
 
-def get_all_transactions(db_path=None, filter_type=None, search_query=None):
-    """Retrieves all transactions ordered by date descending."""
+# ==============================================================================
+# USER AUTHENTICATION & MANAGEMENT
+# ==============================================================================
+
+def create_user(username, password, db_path=None):
+    """Creates a new user with hashed password."""
+    username_clean = username.strip()
+    if not username_clean:
+        return None, "Username cannot be empty."
+
+    if len(password) < 4:
+        return None, "Password must be at least 4 characters long."
+
+    pwd_hash = generate_password_hash(password)
     conn = get_db_connection(db_path)
     cursor = conn.cursor()
 
-    query = "SELECT * FROM transactions WHERE 1=1"
-    params = []
+    try:
+        cursor.execute(
+            "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+            (username_clean, pwd_hash)
+        )
+        conn.commit()
+        new_id = cursor.lastrowid
+        conn.close()
+        return {"id": new_id, "username": username_clean}, None
+    except sqlite3.IntegrityError:
+        conn.close()
+        return None, "Username is already taken. Please choose another."
+    except Exception as e:
+        conn.close()
+        return None, f"Error creating user: {str(e)}"
+
+
+def authenticate_user(username, password, db_path=None):
+    """Authenticates username and password against database."""
+    conn = get_db_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE LOWER(username) = LOWER(?)", (username.strip(),))
+    user = cursor.fetchone()
+    conn.close()
+
+    if user and check_password_hash(user["password_hash"], password):
+        return {"id": user["id"], "username": user["username"]}
+    return None
+
+
+def get_user_by_id(user_id, db_path=None):
+    """Fetches user details by user_id."""
+    conn = get_db_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, created_at FROM users WHERE id = ?", (user_id,))
+    user = cursor.fetchone()
+    conn.close()
+    if user:
+        return dict(user)
+    return None
+
+
+# ==============================================================================
+# TRANSACTIONS DATA QUERY & ISOLATION
+# ==============================================================================
+
+def get_all_transactions(user_id=1, db_path=None, filter_type=None, search_query=None):
+    """Retrieves transactions strictly for the specified user_id ordered by date descending."""
+    conn = get_db_connection(db_path)
+    cursor = conn.cursor()
+
+    query = "SELECT * FROM transactions WHERE user_id = ?"
+    params = [user_id]
 
     if filter_type in ("Income", "Expense"):
         query += " AND type = ?"
@@ -64,16 +158,16 @@ def get_all_transactions(db_path=None, filter_type=None, search_query=None):
     return rows
 
 
-def add_transaction(tx_type, category, amount, date, note="", db_path=None):
-    """Adds a new transaction record."""
+def add_transaction(tx_type, category, amount, date, note="", user_id=1, db_path=None):
+    """Adds a new transaction record associated with a specific user_id."""
     conn = get_db_connection(db_path)
     cursor = conn.cursor()
     cursor.execute(
         """
-        INSERT INTO transactions (type, category, amount, date, note)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO transactions (user_id, type, category, amount, date, note)
+        VALUES (?, ?, ?, ?, ?, ?)
         """,
-        (tx_type, category.strip(), float(amount), date, note.strip() if note else ""),
+        (user_id, tx_type, category.strip(), float(amount), date, note.strip() if note else ""),
     )
     conn.commit()
     inserted_id = cursor.lastrowid
@@ -81,19 +175,19 @@ def add_transaction(tx_type, category, amount, date, note="", db_path=None):
     return inserted_id
 
 
-def delete_transaction(tx_id, db_path=None):
-    """Deletes a transaction by its ID."""
+def delete_transaction(tx_id, user_id=1, db_path=None):
+    """Deletes a transaction by its ID, ensuring it belongs to the authenticated user_id."""
     conn = get_db_connection(db_path)
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM transactions WHERE id = ?", (tx_id,))
+    cursor.execute("DELETE FROM transactions WHERE id = ? AND user_id = ?", (tx_id, user_id))
     conn.commit()
     affected = cursor.rowcount
     conn.close()
     return affected > 0
 
 
-def get_financial_summary(db_path=None):
-    """Calculates total income, total expense, and current balance."""
+def get_financial_summary(user_id=1, db_path=None):
+    """Calculates total income, total expense, and current balance strictly for user_id."""
     conn = get_db_connection(db_path)
     cursor = conn.cursor()
 
@@ -104,7 +198,9 @@ def get_financial_summary(db_path=None):
             COALESCE(SUM(CASE WHEN type = 'Expense' THEN amount ELSE 0 END), 0) AS total_expense,
             COUNT(*) AS total_count
         FROM transactions
-        """
+        WHERE user_id = ?
+        """,
+        (user_id,)
     )
     row = cursor.fetchone()
     conn.close()
@@ -122,8 +218,8 @@ def get_financial_summary(db_path=None):
     }
 
 
-def get_category_breakdown(db_path=None):
-    """Returns total amounts grouped by category for expenses and income."""
+def get_category_breakdown(user_id=1, db_path=None):
+    """Returns total amounts grouped by category strictly for user_id."""
     conn = get_db_connection(db_path)
     cursor = conn.cursor()
 
@@ -131,9 +227,11 @@ def get_category_breakdown(db_path=None):
         """
         SELECT type, category, SUM(amount) as total
         FROM transactions
+        WHERE user_id = ?
         GROUP BY type, category
         ORDER BY total DESC
-        """
+        """,
+        (user_id,)
     )
     rows = cursor.fetchall()
     conn.close()
@@ -147,12 +245,12 @@ def get_category_breakdown(db_path=None):
     return breakdown
 
 
-def get_analytics_summary(timeframe="month", target_period=None, db_path=None):
+def get_analytics_summary(user_id=1, timeframe="month", target_period=None, db_path=None):
     """
     Retrieves period-based summary, category breakdown, and time-series trend data
-    for Day, Month, or Year filters.
+    strictly for specified user_id.
     """
-    from datetime import datetime, date as date_cls
+    from datetime import date as date_cls
     import calendar
 
     conn = get_db_connection(db_path)
@@ -164,19 +262,19 @@ def get_analytics_summary(timeframe="month", target_period=None, db_path=None):
     if timeframe == "day":
         if not target_period or len(target_period) != 10:
             target_period = today.strftime("%Y-%m-%d")
-        sql_where = "WHERE date = ?"
-        params = [target_period]
+        sql_where = "WHERE user_id = ? AND date = ?"
+        params = [user_id, target_period]
     elif timeframe == "year":
         if not target_period or len(target_period) != 4:
             target_period = today.strftime("%Y")
-        sql_where = "WHERE strftime('%Y', date) = ?"
-        params = [target_period]
+        sql_where = "WHERE user_id = ? AND strftime('%Y', date) = ?"
+        params = [user_id, target_period]
     else:  # month (default)
         timeframe = "month"
         if not target_period or len(target_period) != 7:
             target_period = today.strftime("%Y-%m")
-        sql_where = "WHERE strftime('%Y-%m', date) = ?"
-        params = [target_period]
+        sql_where = "WHERE user_id = ? AND strftime('%Y-%m', date) = ?"
+        params = [user_id, target_period]
 
     # 1. Total Income, Expense, Count for period
     cursor.execute(
@@ -252,7 +350,6 @@ def get_analytics_summary(timeframe="month", target_period=None, db_path=None):
     trend_expense = []
 
     if timeframe == "day":
-        # Group by individual transactions for that day or category breakdown
         cursor.execute(
             f"""
             SELECT type, category, amount, date
@@ -278,7 +375,6 @@ def get_analytics_summary(timeframe="month", target_period=None, db_path=None):
             trend_expense = [0.0, 0.0]
 
     elif timeframe == "month":
-        # Days in month: 1 to max_days
         try:
             yr_str, mo_str = target_period.split("-")
             year_int, month_int = int(yr_str), int(mo_str)
@@ -312,7 +408,6 @@ def get_analytics_summary(timeframe="month", target_period=None, db_path=None):
             trend_expense.append(daily_map[d]["Expense"])
 
     elif timeframe == "year":
-        # Months 1 to 12
         month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         cursor.execute(
             f"""

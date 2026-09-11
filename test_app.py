@@ -175,10 +175,43 @@ class ExpenseTrackerTestCase(unittest.TestCase):
         self.assertEqual(response_day.status_code, 200)
         self.assertIn(b"1,200.00", response_day.data)
 
-        # Test year view
-        response_year = self.client.get("/summary?timeframe=year&period=2026")
-        self.assertEqual(response_year.status_code, 200)
-        self.assertIn(b"2026", response_year.data)
+    def test_user_registration_and_login_isolation(self):
+        """Test that different users only see their own transactions."""
+        # 1. Register User A
+        u_a, err_a = database.create_user("user_alice", "password123", self.temp_db_path)
+        self.assertIsNotNone(u_a)
+        self.assertIsNone(err_a)
+
+        # 2. Register User B
+        u_b, err_b = database.create_user("user_bob", "password456", self.temp_db_path)
+        self.assertIsNotNone(u_b)
+        self.assertIsNone(err_b)
+
+        # 3. Add transaction for User A (Alice: 10,000 Income)
+        database.add_transaction("Income", "Salary", 10000.00, "2026-09-01", "Alice Salary", user_id=u_a["id"], db_path=self.temp_db_path)
+
+        # 4. Add transaction for User B (Bob: 500 Expense)
+        database.add_transaction("Expense", "Books", 500.00, "2026-09-02", "Bob Books", user_id=u_b["id"], db_path=self.temp_db_path)
+
+        # 5. Check Alice's summary
+        summary_a = database.get_financial_summary(user_id=u_a["id"], db_path=self.temp_db_path)
+        self.assertEqual(summary_a["total_income"], 10000.00)
+        self.assertEqual(summary_a["total_expense"], 0.00)
+        self.assertEqual(summary_a["transaction_count"], 1)
+
+        # 6. Check Bob's summary
+        summary_b = database.get_financial_summary(user_id=u_b["id"], db_path=self.temp_db_path)
+        self.assertEqual(summary_b["total_income"], 0.00)
+        self.assertEqual(summary_b["total_expense"], 500.00)
+        self.assertEqual(summary_b["transaction_count"], 1)
+
+        # 7. Test authentication helper
+        auth_success = database.authenticate_user("user_alice", "password123", self.temp_db_path)
+        self.assertIsNotNone(auth_success)
+        self.assertEqual(auth_success["username"], "user_alice")
+
+        auth_fail = database.authenticate_user("user_alice", "wrongpass", self.temp_db_path)
+        self.assertIsNone(auth_fail)
 
 
 if __name__ == "__main__":

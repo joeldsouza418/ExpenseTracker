@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In — Personal Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-6 col-lg-5">
+      
+      <div class="tracker-card">
+        <!-- Header Strip -->
+        <div class="tracker-card-header text-center">
+          <span class="tracker-header-title">Welcome Back</span>
+        </div>
+
+        <div class="p-4">
+          <p class="text-muted text-center mb-4" style="font-family: 'Patrick Hand', cursive; font-size: 1.25rem;">
+            Sign in to access your personal expense &amp; income tracker
+          </p>
+
+          <form action="{{ url_for('login') }}" method="POST" id="loginForm">
+            <!-- Username Input -->
+            <div class="mb-3">
+              <label for="usernameInput" class="doodle-label">Username</label>
+              <div class="doodle-input-wrap">
+                <input type="text" class="doodle-input ps-3" id="usernameInput" name="username" placeholder="e.g. joel" value="{{ username or '' }}" required autofocus>
+              </div>
+            </div>
+
+            <!-- Password Input -->
+            <div class="mb-4">
+              <label for="passwordInput" class="doodle-label">Password</label>
+              <div class="doodle-input-wrap">
+                <input type="password" class="doodle-input ps-3" id="passwordInput" name="password" placeholder="••••••••" required>
+              </div>
+            </div>
+
+            <!-- Form Submit Button -->
+            <button type="submit" class="btn-doodle-primary w-100 py-2.5 mb-3">
+              <span>Sign In</span>
+            </button>
+
+            <div class="text-center pt-2 border-top border-ink-light">
+              <p class="mb-2 text-muted small" style="font-family: 'Patrick Hand', cursive; font-size: 1.1rem;">
+                Don't have an account yet?
+              </p>
+              <a href="{{ url_for('register') }}" class="btn-doodle-secondary d-block w-100 mb-2">
+                <span>Create New Account</span>
+              </a>
+              <a href="{{ url_for('guest_session') }}" class="text-muted small text-decoration-underline" style="font-family: 'Patrick Hand', cursive;">
+                Continue in Guest Mode
+              </a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
