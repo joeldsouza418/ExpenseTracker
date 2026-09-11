@@ -18,7 +18,7 @@
     <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
       
       <!-- Timeframe Selector Tabs -->
-      <div class="d-flex align-items-center gap-2">
+      <div class="d-flex align-items-center gap-2 flex-wrap">
         <span class="fw-bold me-1 text-dark" style="font-family: 'Fredoka', cursive;">View By:</span>
         <a href="{{ url_for('summary', timeframe='day') }}" class="doodle-time-tab {% if analytics.timeframe == 'day' %}active{% endif %}">
           Daily
@@ -32,27 +32,29 @@
       </div>
 
       <!-- Specific Period Selector Form -->
-      <form action="{{ url_for('summary') }}" method="GET" class="d-flex align-items-center gap-2">
+      <form action="{{ url_for('summary') }}" method="GET" class="d-flex flex-wrap align-items-center gap-2">
         <input type="hidden" name="timeframe" value="{{ analytics.timeframe }}">
         
         <label for="periodInput" class="fw-bold text-dark mb-0 text-nowrap" style="font-family: 'Patrick Hand', cursive; font-size: 1.15rem;">
           Select Period:
         </label>
 
-        {% if analytics.timeframe == 'day' %}
-          <input type="date" id="periodInput" name="period" class="doodle-search-input" style="width: 160px;" value="{{ analytics.target_period }}" onchange="this.form.submit()">
-        {% elif analytics.timeframe == 'year' %}
-          <select id="periodInput" name="period" class="doodle-search-input" style="width: 120px;" onchange="this.form.submit()">
-            {% for yr in range(2023, 2030) %}
-              <option value="{{ yr }}" {% if analytics.target_period == yr|string %}selected{% endif %}>{{ yr }}</option>
-            {% endfor %}
-          </select>
-        {% else %}
-          <!-- Month (default) -->
-          <input type="month" id="periodInput" name="period" class="doodle-search-input" style="width: 170px;" value="{{ analytics.target_period }}" onchange="this.form.submit()">
-        {% endif %}
+        <div class="d-flex align-items-center gap-2 flex-grow-1 flex-sm-grow-0">
+          {% if analytics.timeframe == 'day' %}
+            <input type="date" id="periodInput" name="period" class="doodle-search-input flex-grow-1" style="max-width: 170px;" value="{{ analytics.target_period }}" onchange="this.form.submit()">
+          {% elif analytics.timeframe == 'year' %}
+            <select id="periodInput" name="period" class="doodle-search-input flex-grow-1" style="max-width: 140px;" onchange="this.form.submit()">
+              {% for yr in range(2023, 2030) %}
+                <option value="{{ yr }}" {% if analytics.target_period == yr|string %}selected{% endif %}>{{ yr }}</option>
+              {% endfor %}
+            </select>
+          {% else %}
+            <!-- Month (default) -->
+            <input type="month" id="periodInput" name="period" class="doodle-search-input flex-grow-1" style="max-width: 170px;" value="{{ analytics.target_period }}" onchange="this.form.submit()">
+          {% endif %}
 
-        <button type="submit" class="btn-doodle-primary py-1 px-3 fs-6">Update</button>
+          <button type="submit" class="btn-doodle-primary py-1 px-3 fs-6 text-nowrap">Update</button>
+        </div>
       </form>
 
     </div>

@@ -1080,6 +1080,84 @@ body {
   box-shadow: 2.5px 2.5px 0px #2b2d42;
 }
 
+/* 3-Line Hamburger Menu Button (Mobile View) */
+.doodle-menu-btn {
+  background: #ffffff !important;
+  border: var(--ink-border-thin) !important;
+  border-radius: 12px;
+  padding: 0.45rem 0.6rem !important;
+  box-shadow: 2.5px 2.5px 0px #2b2d42;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none !important;
+}
+
+.doodle-menu-btn:hover {
+  background: #fbf5e8 !important;
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0px #2b2d42;
+}
+
+.doodle-menu-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1.5px 1.5px 0px #2b2d42;
+}
+
+.doodle-menu-btn .hamburger-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20px;
+  height: 15px;
+}
+
+.doodle-menu-btn .hamburger-icon span {
+  display: block;
+  width: 100%;
+  height: 2.5px;
+  background-color: var(--ink-color);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+/* Mobile Dropdown Navigation Styling */
+@media (max-width: 767.98px) {
+  #navMenuCollapse {
+    background: #ffffff;
+    border: var(--ink-border-thin);
+    border-radius: 16px;
+    padding: 0.85rem;
+    box-shadow: 3px 3px 0px #2b2d42;
+    margin-top: 0.65rem !important;
+  }
+  
+  #navMenuCollapse .nav-page-btn {
+    text-align: center;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    display: block;
+  }
+
+  .mini-stat-box {
+    padding: 0.75rem 0.4rem;
+  }
+
+  .mini-stat-label {
+    font-size: 0.78rem;
+  }
+
+  .mini-stat-val {
+    font-size: 1.15rem;
+  }
+}
+
+/* Mobile Container Overflow Safety */
+.doodle-card, .tracker-card {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
 /* Timeframe Selector Tabs (Day, Month, Year) */
 .doodle-time-tab {
   font-family: var(--font-title);

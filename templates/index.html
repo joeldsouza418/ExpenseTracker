@@ -110,20 +110,20 @@
       <div class="doodle-card p-3 p-md-4 mb-4">
         
         <!-- Top Mini Stats Ribbon -->
-        <div class="row g-3 mb-4 text-center">
-          <div class="col-4">
+        <div class="row g-2 g-sm-3 mb-4 text-center">
+          <div class="col-12 col-sm-4">
             <div class="mini-stat-box box-income">
               <div class="mini-stat-label">Total Income</div>
               <div class="mini-stat-val text-green-dark">{{ summary.total_income | format_currency }}</div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-6 col-sm-4">
             <div class="mini-stat-box box-expense">
               <div class="mini-stat-label">Total Expenses</div>
               <div class="mini-stat-val text-peach-dark">{{ summary.total_expense | format_currency }}</div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-6 col-sm-4">
             <div class="mini-stat-box box-balance">
               <div class="mini-stat-label">Balance to Date</div>
               <div class="mini-stat-val text-purple-dark">{{ summary.balance | format_currency }}</div>
@@ -134,7 +134,7 @@
         <!-- Filter Tabs & Search Bar -->
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
           <!-- Filter Tabs -->
-          <div class="d-flex align-items-center gap-1">
+          <div class="d-flex align-items-center gap-1 flex-wrap">
             <a href="{{ url_for('index', search=search_query) }}" class="doodle-filter-tab {% if not filter_type %}active{% endif %}">
               All ({{ summary.transaction_count }})
             </a>
@@ -147,17 +147,17 @@
           </div>
 
           <!-- Search Form -->
-          <form action="{{ url_for('index') }}" method="GET" class="d-flex align-items-center gap-1">
+          <form action="{{ url_for('index') }}" method="GET" class="d-flex align-items-center gap-1 w-100 w-sm-auto mt-1 mt-sm-0">
             {% if filter_type %}
               <input type="hidden" name="type" value="{{ filter_type }}">
             {% endif %}
-            <div class="doodle-search-wrap">
-              <input type="text" name="search" class="doodle-search-input" placeholder="Search entries..." value="{{ search_query }}">
+            <div class="doodle-search-wrap flex-grow-1">
+              <input type="text" name="search" class="doodle-search-input w-100" placeholder="Search entries..." value="{{ search_query }}">
               {% if search_query %}
                 <a href="{{ url_for('index', type=filter_type) }}" class="search-clear-btn" title="Clear Search">×</a>
               {% endif %}
             </div>
-            <button type="submit" class="btn-doodle-search">Find</button>
+            <button type="submit" class="btn-doodle-search text-nowrap">Find</button>
           </form>
         </div>
 

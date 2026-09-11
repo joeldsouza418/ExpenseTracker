@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 import database
 
 app = Flask(__name__)
@@ -8,6 +8,11 @@ app.secret_key = os.environ.get("SECRET_KEY", "expense-tracker-secret-key-2026")
 
 # Ensure database is initialized
 database.init_db()
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico", mimetype="image/vnd.microsoft.icon")
 
 
 @app.template_filter("format_currency")

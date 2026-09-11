@@ -6,6 +6,10 @@
   <title>{% block title %}Personal Money Snapshot — Track Money Without A Complicated App{% endblock %}</title>
   <meta name="description" content="A simple, personal finance tracker with clean daily entry, category insights, and cash flow tracking.">
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
   <!-- Google Fonts: Fredoka (Headings/Banners), Patrick Hand (Handwritten accents), Nunito (Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,8 +30,8 @@
 <body>
 
   <!-- Compact Sleek Top Navbar -->
-  <nav class="navbar-custom sticky-top py-3">
-    <div class="container-fluid px-3 px-md-5 d-flex align-items-center justify-content-between flex-wrap gap-2">
+  <nav class="navbar-custom sticky-top py-2 py-md-3 navbar-expand-md">
+    <div class="container-fluid px-3 px-md-5 d-flex align-items-center justify-content-between flex-wrap">
       
       <!-- Left Side: Dynamic Greeting & Title -->
       <a class="navbar-brand d-flex align-items-center text-decoration-none m-0" href="{{ url_for('index') }}">
@@ -37,14 +41,25 @@
         </div>
       </a>
 
-      <!-- Right Side: Navigation Tabs -->
-      <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-        <a href="{{ url_for('index') }}" class="nav-page-btn {% if active_tab == 'dashboard' %}active{% endif %}">
-          <span>Dashboard</span>
-        </a>
-        <a href="{{ url_for('summary') }}" class="nav-page-btn {% if active_tab == 'summary' %}active{% endif %}">
-          <span>Spending Summary</span>
-        </a>
+      <!-- 3-Line Hamburger Menu Toggle Button (Mobile View) -->
+      <button class="navbar-toggler doodle-menu-btn d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenuCollapse" aria-controls="navMenuCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="hamburger-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
+      <!-- Navigation Tabs (Inline on Desktop, Collapsible 3-Line Dropdown on Mobile) -->
+      <div class="collapse navbar-collapse justify-content-end mt-2 mt-md-0" id="navMenuCollapse">
+        <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2 pt-2 pt-md-0 ms-auto">
+          <a href="{{ url_for('index') }}" class="nav-page-btn {% if active_tab == 'dashboard' %}active{% endif %}">
+            <span>Dashboard</span>
+          </a>
+          <a href="{{ url_for('summary') }}" class="nav-page-btn {% if active_tab == 'summary' %}active{% endif %}">
+            <span>Spending Summary</span>
+          </a>
+        </div>
       </div>
 
     </div>
